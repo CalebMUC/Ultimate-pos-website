@@ -1,0 +1,6 @@
+# Keep LF line endings everywhere (Prettier and CI expect LF), regardless of core.autocrlf.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary

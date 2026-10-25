@@ -1,26 +1,193 @@
 @import "tailwindcss";
 
+/* Dark mode is opt-in via the theme toggle (<html data-theme="dark">), never automatic. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+/* Styles that apply only when JavaScript is running (<html class="js">, set in <head>). */
+@custom-variant js (&:where(.js, .js *));
+
+/*
+ * Ultimate POS theme — green and white, with blue accents.
+ * Every colour is a CSS variable so dark mode (and a future rebrand) is a token swap.
+ * The white theme is the default; dark applies only when the visitor picks it.
+ * Contrast checked against WCAG 2.2 AA (>= 4.5:1 for text):
+ *   white on --primary #0a7a43 = 5.4:1, white on --accent #1d4ed8 = 6.7:1,
+ *   --muted-fg on --bg = 7.3:1 (light) / 8.4:1 (dark).
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  --bg: #ffffff;
+  --bg-subtle: #f3f8f5;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --fg: #0e1c16;
+  --muted-fg: #4a5a53;
+  --border: #dbe6e0;
+  --border-strong: #b9cbc1;
+
+  --primary: #0a7a43;
+  --primary-hover: #086637;
+  --primary-fg: #ffffff;
+  --primary-soft: #e6f6ed;
+  --primary-soft-fg: #075c33;
+
+  --accent: #1d4ed8;
+  --accent-hover: #1a43b8;
+  --accent-fg: #ffffff;
+  --accent-soft: #e8efff;
+  --accent-soft-fg: #1a3f9e;
+
+  --ring: #1d4ed8;
+  --danger: #b42318;
+  --danger-soft: #fef3f2;
+  --hero-glow-1: rgb(10 122 67 / 0.14);
+  --hero-glow-2: rgb(29 78 216 / 0.1);
+  --shadow-color: 150 30% 15%;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0b1511;
+  --bg-subtle: #0f1c16;
+  --surface: #132019;
+  --surface-raised: #182821;
+  --fg: #e6efe9;
+  --muted-fg: #9fb3a9;
+  --border: #22362c;
+  --border-strong: #2f4a3c;
+
+  --primary: #3ddc84;
+  --primary-hover: #5fe59a;
+  --primary-fg: #04271a;
+  --primary-soft: #133524;
+  --primary-soft-fg: #8cf0b8;
+
+  --accent: #7aa7ff;
+  --accent-hover: #9bbdff;
+  --accent-fg: #0a1a3d;
+  --accent-soft: #15254a;
+  --accent-soft-fg: #b4ccff;
+
+  --ring: #7aa7ff;
+  --danger: #fda29b;
+  --danger-soft: #3a1512;
+  --hero-glow-1: rgb(61 220 132 / 0.12);
+  --hero-glow-2: rgb(122 167 255 / 0.1);
+  --shadow-color: 150 40% 2%;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-fg: var(--fg);
+  --color-muted-fg: var(--muted-fg);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-fg: var(--primary-fg);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-fg: var(--primary-soft-fg);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-fg: var(--accent-soft-fg);
+  --color-ring: var(--ring);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-whatsapp: #25d366;
+  --color-whatsapp-fg: #062e17;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-card: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 4px 16px -4px hsl(var(--shadow-color) / 0.1);
+  --shadow-lift: 0 2px 4px hsl(var(--shadow-color) / 0.06), 0 16px 40px -12px hsl(var(--shadow-color) / 0.22);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    /* Keep anchor targets and focused elements clear of the sticky header (WCAG 2.4.11) */
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--primary-soft);
+    color: var(--primary-soft-fg);
+  }
+
+  /* Native <details> disclosure: hide the default marker, we draw our own chevron */
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .bg-hero {
+    background:
+      radial-gradient(60rem 30rem at 85% -10%, var(--hero-glow-2), transparent 60%),
+      radial-gradient(50rem 30rem at 0% 0%, var(--hero-glow-1), transparent 60%), var(--bg);
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
