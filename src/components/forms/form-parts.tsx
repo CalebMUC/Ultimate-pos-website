@@ -35,7 +35,8 @@ export function ConsentLabel() {
   return (
     <>
       I agree that Ultimate POS may contact me about this request and store my details as described in the{" "}
-      <Link href="/privacy-policy" className="font-medium text-primary underline underline-offset-2">
+      {/* Required for consent under the Data Protection Act; prefetch off until the page ships. */}
+      <Link href="/privacy-policy" prefetch={false} className="font-medium text-primary underline underline-offset-2">
         privacy policy
       </Link>
       .

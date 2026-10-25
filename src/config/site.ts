@@ -58,6 +58,12 @@ export const site = {
   // [[PLACEHOLDER]] add profile URLs. Only networks with a URL are rendered.
   social: {} as Partial<Record<SocialNetwork, string>>,
 
+  /** Square brand mark used for structured data and icons. [[PLACEHOLDER]] replace with the official logo. */
+  logo: "/logo.svg",
+
+  // [[PLACEHOLDER]] "From KES x/month". While null, no price appears anywhere (pages or structured data).
+  pricing: { fromKesPerMonth: null as number | null },
+
   // [[PLACEHOLDER]] app login URL. The header "Log in" link is hidden while this is null.
   appLoginUrl: null as string | null,
 

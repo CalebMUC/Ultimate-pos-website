@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "manufacturing-production-software",
+  updatedAt: "2026-10-25",
   metaTitle: "Manufacturing & Production Software",
   metaDescription:
     "Production software for Kenyan manufacturers: production formulas, production runs, cost per unit, raw material stock and sales in one system.",

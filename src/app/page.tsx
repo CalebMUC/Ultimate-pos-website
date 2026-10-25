@@ -1,6 +1,8 @@
 import { homeFaqs } from "@/content/faqs";
 import { testimonials } from "@/content/testimonials";
 import { pageMetadata } from "@/lib/seo/metadata";
+import { softwareApplicationSchema } from "@/lib/seo/schema";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Hero } from "@/components/sections/hero";
 import { TrustStrip } from "@/components/sections/trust-strip";
 import { WhatIs } from "@/components/sections/what-is";
@@ -24,6 +26,7 @@ export const metadata = pageMetadata({
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={softwareApplicationSchema(testimonials)} />
       <Hero />
       <TrustStrip />
       <WhatIs />

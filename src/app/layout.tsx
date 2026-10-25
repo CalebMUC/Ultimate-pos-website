@@ -1,11 +1,15 @@
 ﻿import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { site } from "@/config/site";
-import { isProduction } from "@/env";
+import { isProduction, seoEnv } from "@/env";
+import { siteSchema } from "@/lib/seo/schema";
+import { JsonLd } from "@/components/seo/json-ld";
 import { themeInitScript } from "@/lib/theme";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { WhatsAppFab } from "@/components/layout/whatsapp-fab";
+import { Analytics } from "@/components/analytics/analytics";
+import { ConsentBanner } from "@/components/analytics/consent-banner";
 import "./globals.css";
 
 /**
@@ -44,6 +48,15 @@ export const metadata: Metadata = {
   // Preview and staging deployments must never be indexed.
   robots: isProduction ? { index: true, follow: true } : { index: false, follow: false },
   formatDetection: { telephone: false },
+  icons: { icon: [{ url: site.logo, type: "image/svg+xml" }] },
+  verification: {
+    google: seoEnv.GOOGLE_SITE_VERIFICATION,
+    other: {
+      ...(seoEnv.BING_SITE_VERIFICATION ? { "msvalidate.01": seoEnv.BING_SITE_VERIFICATION } : {}),
+      ...(seoEnv.META_DOMAIN_VERIFICATION ? { "facebook-domain-verification": seoEnv.META_DOMAIN_VERIFICATION } : {}),
+    },
+  },
+  ...(seoEnv.FACEBOOK_APP_ID ? { facebook: { appId: seoEnv.FACEBOOK_APP_ID } } : {}),
 };
 
 export const viewport: Viewport = {
@@ -53,7 +66,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // suppressHydrationWarning: the theme script may add data-theme="dark" before React hydrates.
-    <html lang="en-KE" className={`${inter.variable} ${jakarta.variable}`} suppressHydrationWarning>
+    <html
+      lang="en-KE"
+      className={`${inter.variable} ${jakarta.variable}`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
@@ -70,6 +88,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <SiteFooter />
         <WhatsAppFab />
+        <ConsentBanner />
+        <Analytics />
+        <JsonLd data={siteSchema()} />
       </body>
     </html>
   );

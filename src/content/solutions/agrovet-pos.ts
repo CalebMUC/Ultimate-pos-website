@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "agrovet-pos",
+  updatedAt: "2026-10-25",
   metaTitle: "Agrovet POS System Kenya",
   metaDescription:
     "Agrovet POS for Kenya: batch and expiry tracking for seeds, sprays and vet medicines, accurate stock, farmer credit and M-Pesa payments at the counter.",

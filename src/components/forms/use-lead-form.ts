@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useTransition, type FormEvent } from "react";
 import { useForm, type DefaultValues, type FieldValues, type Path } from "react-hook-form";
-import type { z } from "zod";
+import type * as z from "zod/mini";
 import { submitContact, submitDemo, submitQuote } from "@/lib/leads/submit-lead";
 import { initialLeadState } from "@/lib/leads/state";
 import type { LeadFormType } from "@/lib/leads/schemas";
@@ -18,7 +18,7 @@ const actions = { demo: submitDemo, quote: submitQuote, contact: submitContact }
  */
 export function useLeadForm<TInput extends FieldValues, TOutput>(
   formType: LeadFormType,
-  schema: z.ZodType<TOutput, TInput>,
+  schema: z.ZodMiniType<TOutput, TInput>,
   fieldOrder: Path<TInput>[],
   defaultValues?: DefaultValues<TInput>,
 ) {

@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Typecheck, lint, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run check:content
+      - run: npm test
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+  e2e:
+    name: Build, E2E, budgets, Lighthouse
+    needs: quality
+    runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: 1
+      # Fake IDs so the consent tests can prove GA4/Pixel load only after opt-in.
+      # Third-party requests are intercepted by the tests; nothing reaches Google or Meta.
+      NEXT_PUBLIC_GA_ID: G-TEST000000
+      NEXT_PUBLIC_META_PIXEL_ID: "1234567890"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: First-load JavaScript budget
+        run: npm run check:bundle
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end + accessibility tests
+        run: npm run test:e2e
+      - name: Lighthouse CI
+        run: npx --yes @lhci/cli@0.15.1 autorun
+      - name: Upload reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            playwright-report/
+            .lighthouseci/
+          retention-days: 14

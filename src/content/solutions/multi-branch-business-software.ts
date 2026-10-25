@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "multi-branch-business-software",
+  updatedAt: "2026-10-25",
   metaTitle: "Multi-Branch Business Software",
   metaDescription:
     "Run every branch from one account: real-time stock per branch, stock transfers with an inbox, roles, permissions, an audit log and cloud access.",

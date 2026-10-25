@@ -1,17 +1,21 @@
 "use client";
 
+import { readConsent } from "./consent";
+
 /**
- * Analytics events. GA4 and the Meta Pixel are only loaded after the visitor accepts
- * analytics / marketing cookies (step 6), so until then these calls are no-ops.
+ * Analytics events. GA4 loads only after analytics consent and the Meta Pixel only after
+ * marketing consent (see components/analytics/analytics.tsx). Events fired before a
+ * consented script is ready are queued, so a conversion on page load is not lost.
+ * Without consent, events are dropped.
  */
 
-type GtagFn = (command: "event", name: string, params?: Record<string, unknown>) => void;
-type FbqFn = (command: "track" | "trackCustom", name: string, params?: Record<string, unknown>) => void;
+type Command = [string, ...unknown[]];
 
 declare global {
   interface Window {
-    gtag?: GtagFn;
-    fbq?: FbqFn;
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+    fbq?: ((...args: unknown[]) => void) & { queue?: unknown[]; loaded?: boolean };
   }
 }
 
@@ -24,8 +28,28 @@ const metaEvents: Record<AnalyticsEvent, string> = {
   phone_click: "Contact",
 };
 
+const pending: { ga: Command[]; meta: Command[] } = { ga: [], meta: [] };
+
 export function trackEvent(name: AnalyticsEvent, params: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return;
-  window.gtag?.("event", name, params);
-  window.fbq?.("track", metaEvents[name], params);
+  const consent = readConsent();
+
+  if (consent?.analytics) {
+    const command: Command = ["event", name, params];
+    if (window.gtag) window.gtag(...command);
+    else pending.ga.push(command);
+  }
+
+  if (consent?.marketing) {
+    const command: Command = ["track", metaEvents[name], params];
+    if (window.fbq) window.fbq(...command);
+    else pending.meta.push(command);
+  }
+}
+
+/** Called once GA4 / the Meta Pixel are initialised, to send anything queued before. */
+export function flushPending(destination: "ga" | "meta") {
+  const send = destination === "ga" ? window.gtag : window.fbq;
+  if (!send) return;
+  for (const command of pending[destination].splice(0)) send(...command);
 }

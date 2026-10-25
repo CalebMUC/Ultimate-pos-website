@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "liquor-wines-spirits-pos",
+  updatedAt: "2026-10-25",
   metaTitle: "Wines & Spirits / Liquor Store POS",
   metaDescription:
     "POS for wines and spirits shops in Kenya: tight stock control, shift cash-ups, staff permissions and a full audit log, with M-Pesa at the counter.",

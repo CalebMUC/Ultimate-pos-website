@@ -4,8 +4,8 @@ import { Redis } from "@upstash/redis";
 import { isProduction, serverEnv } from "@/env";
 import { reportError, reportWarning } from "@/lib/monitoring";
 
-/** 5 lead submissions per hour, counted separately per IP address and per email address. */
-const LIMIT = 5;
+/** Lead submissions per hour (default 5), counted separately per IP address and per email address. */
+const limit = () => serverEnv().LEAD_RATE_LIMIT_PER_HOUR;
 const WINDOW_MS = 60 * 60 * 1000;
 
 let upstash: Ratelimit | null | undefined;
@@ -20,7 +20,7 @@ function getUpstash(): Ratelimit | null {
   }
   upstash = new Ratelimit({
     redis: new Redis({ url, token }),
-    limiter: Ratelimit.slidingWindow(LIMIT, "1 h"),
+    limiter: Ratelimit.slidingWindow(limit(), "1 h"),
     prefix: "ultimatepos:leads",
   });
   return upstash;
@@ -32,7 +32,7 @@ const memory = new Map<string, number[]>();
 function memoryLimit(key: string): boolean {
   const now = Date.now();
   const hits = (memory.get(key) ?? []).filter((t) => now - t < WINDOW_MS);
-  if (hits.length >= LIMIT) {
+  if (hits.length >= limit()) {
     memory.set(key, hits);
     return false;
   }

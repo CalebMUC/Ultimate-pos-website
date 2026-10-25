@@ -34,6 +34,8 @@ const serverSchema = z.object({
   UPSTASH_REDIS_REST_URL: z.url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
   LEAD_WEBHOOK_URL: z.url().optional(),
+  /** Lead submissions allowed per hour per IP and per email. Raised only for end-to-end tests. */
+  LEAD_RATE_LIMIT_PER_HOUR: z.coerce.number().int().positive().default(5),
   SENTRY_DSN: z.url().optional(),
 });
 
@@ -56,6 +58,21 @@ export const publicEnv = publicSchema.parse({
 });
 
 export const isProduction = publicEnv.NEXT_PUBLIC_SITE_ENV === "production";
+
+/** Search-engine / social verification codes (not secret; read at build time for <meta> tags). */
+export const seoEnv = z
+  .object({
+    GOOGLE_SITE_VERIFICATION: z.string().min(1).optional(),
+    BING_SITE_VERIFICATION: z.string().min(1).optional(),
+    META_DOMAIN_VERIFICATION: z.string().min(1).optional(),
+    FACEBOOK_APP_ID: z.string().regex(/^\d+$/).optional(),
+  })
+  .parse({
+    GOOGLE_SITE_VERIFICATION: emptyToUndefined(process.env.GOOGLE_SITE_VERIFICATION),
+    BING_SITE_VERIFICATION: emptyToUndefined(process.env.BING_SITE_VERIFICATION),
+    META_DOMAIN_VERIFICATION: emptyToUndefined(process.env.META_DOMAIN_VERIFICATION),
+    FACEBOOK_APP_ID: emptyToUndefined(process.env.FACEBOOK_APP_ID),
+  });
 
 export type ServerEnv = z.infer<typeof serverSchema>;
 

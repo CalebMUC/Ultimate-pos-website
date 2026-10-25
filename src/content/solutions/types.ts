@@ -8,6 +8,8 @@ import type { SolutionSlug } from "./catalog";
  */
 export type SolutionContent = {
   slug: SolutionSlug;
+  /** Last meaningful content change (YYYY-MM-DD). Used for the sitemap's lastModified. */
+  updatedAt: string;
   /** ≤ 39 characters: the layout appends " | Ultimate POS Kenya" (≤ 60 total) */
   metaTitle: string;
   /** ≤ 155 characters */

@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import * as z from "zod/mini";
 import { site } from "@/config/site";
 import { checkLeadRateLimit } from "@/lib/ratelimit";
 import { reportError, reportWarning } from "@/lib/monitoring";
@@ -69,7 +69,7 @@ async function submitLead(
   const parsed = leadSchemas[formType].safeParse(formDataToInput(formType, formData));
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
-    for (const [field, messages] of Object.entries(z.flattenError(parsed.error as z.ZodError).fieldErrors)) {
+    for (const [field, messages] of Object.entries(z.flattenError(parsed.error as z.core.$ZodError).fieldErrors)) {
       if (Array.isArray(messages) && messages[0]) fieldErrors[field] = messages[0];
     }
     return {

@@ -114,6 +114,8 @@
   html {
     /* Keep anchor targets and focused elements clear of the sticky header (WCAG 2.4.11) */
     scroll-padding-top: 5.5rem;
+    /* …and clear of the cookie banner while it is open (set by ConsentBanner) */
+    scroll-padding-bottom: var(--consent-offset, 0px);
     -webkit-text-size-adjust: 100%;
   }
 

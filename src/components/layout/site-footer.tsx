@@ -5,6 +5,7 @@ import { companyLinks, getStartedLinks, legalLinks, solutionLinks, type NavLink 
 import { whatsappLink } from "@/lib/whatsapp";
 import { Container } from "@/components/ui/layout";
 import { WhatsAppIcon } from "@/components/icons";
+import { CookieSettingsButton } from "@/components/analytics/cookie-settings-button";
 import { Logo } from "./logo";
 
 const socialLabels: Record<SocialNetwork, string> = {
@@ -107,6 +108,9 @@ export function SiteFooter() {
                 </Link>
               </li>
             ))}
+            <li>
+              <CookieSettingsButton className="cursor-pointer hover:text-primary" />
+            </li>
             {socials.map(([network, url]) => (
               <li key={network}>
                 <a href={url} target="_blank" rel="noopener noreferrer me" className="hover:text-primary">

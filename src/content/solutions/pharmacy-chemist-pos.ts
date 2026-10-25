@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "pharmacy-chemist-pos",
+  updatedAt: "2026-10-25",
   metaTitle: "Pharmacy POS System Kenya",
   metaDescription:
     "Pharmacy POS for Kenyan chemists: prescription register, batch and expiry tracking, expiry reports, stock valuation and M-Pesa payments at the counter.",

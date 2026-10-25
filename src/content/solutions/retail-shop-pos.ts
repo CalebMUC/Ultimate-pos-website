@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "retail-shop-pos",
+  updatedAt: "2026-10-25",
   metaTitle: "Retail Shop POS System Kenya",
   metaDescription:
     "A simple POS for Kenyan retail shops: quick checkout with M-Pesa, accurate stock, customer credit you can track, and daily sales and profit reports.",

@@ -3,6 +3,14 @@
 Everything that must be confirmed or supplied before the site goes live.
 Search the code for `[[PLACEHOLDER]]` to find each one.
 
+## Pages still to build (launch blockers marked ⚠)
+
+- [ ] ⚠ `/privacy-policy` (Kenya Data Protection Act 2019) — linked from every form and the cookie banner
+- [ ] ⚠ `/terms`
+- [ ] `/pricing`, `/about`, `/faq`, `/blog` (+ articles), `/testimonials` (once real testimonials exist)
+
+Nav and footer links to a page appear automatically once it is added to `staticRoutes` in `src/config/routes.ts` (which also adds it to the sitemap).
+
 ## Business facts — `src/config/site.ts`
 
 - [x] Domain: `https://ultimatepos.co.ke` (decide whether `www.` redirects to the apex at the DNS/host level)
@@ -19,7 +27,7 @@ Search the code for `[[PLACEHOLDER]]` to find each one.
 
 - [x] Colours: green and white with blue accents (tokens in `src/app/globals.css`)
 - [x] Fonts: Plus Jakarta Sans (headings), Inter (body)
-- [ ] Official logo — replace the placeholder mark in `src/components/layout/logo.tsx`
+- [ ] Official logo — replace the placeholder mark in `src/components/layout/logo.tsx`, `public/logo.svg` (used in structured data and as the favicon), `src/app/apple-icon.tsx` and `src/lib/seo/og-image.tsx`
 - [ ] Real product screenshots (dashboard, POS screen, M-Pesa, stock, reports) to replace the illustration in `src/components/sections/product-mockup.tsx`
 
 ## Product claims — `src/content/features.ts`
@@ -43,7 +51,7 @@ Search the code for `[[PLACEHOLDER]]` to find each one.
 
 ## Pricing
 
-- [ ] Publish a "From KES x/month" price, or keep "Get a tailored quote" only
+- [ ] Publish a "From KES x/month" price (`site.pricing.fromKesPerMonth`), or keep "Get a tailored quote" only. Google only shows SoftwareApplication rich results when a price (and reviews/ratings) exist, so without a price that schema stays valid but not rich-result eligible.
 
 ## Accounts and keys (set in the hosting dashboard, see `.env.example`)
 
@@ -51,12 +59,15 @@ Search the code for `[[PLACEHOLDER]]` to find each one.
 - [ ] Cloudflare Turnstile site key + secret key
 - [ ] Upstash Redis (rate limiting)
 - [ ] GA4 measurement ID
-- [ ] Meta Pixel ID (optional), Meta domain-verification code (optional)
+- [ ] Meta Pixel ID (optional)
+- [ ] Verification codes: `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`, `META_DOMAIN_VERIFICATION`, `FACEBOOK_APP_ID` (optional)
 - [ ] Sentry DSN
 
 ## After launch
 
-- [ ] Submit the sitemap in Google Search Console and Bing Webmaster Tools
+- [ ] Submit `https://ultimatepos.co.ke/sitemap.xml` in Google Search Console and Bing Webmaster Tools
+- [ ] Run the Rich Results Test on `/`, `/features` and a solution page
+- [ ] Make sure `www.ultimatepos.co.ke` 301-redirects to `https://ultimatepos.co.ke` (canonical host)
 - [ ] Scrape every key URL in the Meta Sharing Debugger
 - [ ] Create and verify a Google Business Profile as a service-area business (address hidden, same name and phone)
 - [ ] Confirm the host/WAF does not block `Googlebot` or `facebookexternalhit`

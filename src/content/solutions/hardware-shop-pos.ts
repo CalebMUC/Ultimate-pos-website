@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "hardware-shop-pos",
+  updatedAt: "2026-10-25",
   metaTitle: "Hardware Store POS System Kenya",
   metaDescription:
     "POS for Kenyan hardware stores: units of measure, bulk product import from Excel, contractor credit accounts, stock control and M-Pesa payments.",

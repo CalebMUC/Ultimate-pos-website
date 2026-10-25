@@ -2,7 +2,7 @@
 
 import Script from "next/script";
 import { useCallback, useEffect, useRef } from "react";
-import { publicEnv } from "@/env";
+import { clientEnv } from "@/lib/public-env";
 
 type TurnstileApi = {
   render: (el: HTMLElement, options: Record<string, unknown>) => string;
@@ -23,7 +23,7 @@ declare global {
  * Pass a changing `resetKey` to get a fresh token after a failed submission.
  */
 export function TurnstileWidget({ resetKey }: { resetKey?: unknown }) {
-  const siteKey = publicEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const siteKey = clientEnv.turnstileSiteKey;
   const container = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | undefined>(undefined);
 

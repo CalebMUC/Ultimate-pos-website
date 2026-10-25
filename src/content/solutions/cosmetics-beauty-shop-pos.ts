@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "cosmetics-beauty-shop-pos",
+  updatedAt: "2026-10-25",
   metaTitle: "Cosmetics & Beauty Shop POS Kenya",
   metaDescription:
     "POS for cosmetics and beauty shops in Kenya: organise stock by brand, sell gift sets as bundles, reward loyal customers, track expiry and take M-Pesa.",

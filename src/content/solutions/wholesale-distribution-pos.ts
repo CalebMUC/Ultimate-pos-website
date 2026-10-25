@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "wholesale-distribution-pos",
+  updatedAt: "2026-10-25",
   metaTitle: "Wholesale & Distribution Software Kenya",
   metaDescription:
     "Wholesale and distribution software for Kenya: purchase orders, supplier ledgers, customer credit and aging, delivery orders, riders and rider cash-up.",

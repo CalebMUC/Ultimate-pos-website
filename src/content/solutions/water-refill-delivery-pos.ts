@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "water-refill-delivery-pos",
+  updatedAt: "2026-10-25",
   metaTitle: "Water Refilling & Delivery POS Kenya",
   metaDescription:
     "POS for water refilling stations in Kenya: refills and bundles at the counter, delivery orders, rider cash-up, trips and fuel tracking, and M-Pesa.",

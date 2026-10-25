@@ -3,7 +3,10 @@ import { ArrowRight, Check } from "lucide-react";
 import { featureGroups } from "@/content/features";
 import { solutionsUsingFeatures } from "@/content/solutions";
 import { whatsappLink } from "@/lib/whatsapp";
+import { testimonials } from "@/content/testimonials";
 import { pageMetadata } from "@/lib/seo/metadata";
+import { softwareApplicationSchema } from "@/lib/seo/schema";
+import { JsonLd } from "@/components/seo/json-ld";
 import { LinkButton } from "@/components/ui/button";
 import { Container } from "@/components/ui/layout";
 import { PageHero } from "@/components/ui/page-hero";
@@ -22,6 +25,7 @@ export const metadata = pageMetadata({
 export default function FeaturesPage() {
   return (
     <>
+      <JsonLd data={softwareApplicationSchema(testimonials)} />
       <PageHero
         top={<Breadcrumbs items={[{ name: "Features", path: "/features" }]} />}
         eyebrow="Features"

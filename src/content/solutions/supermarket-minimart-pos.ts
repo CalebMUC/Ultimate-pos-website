@@ -2,6 +2,7 @@ import type { SolutionContent } from "./types";
 
 const content: SolutionContent = {
   slug: "supermarket-minimart-pos",
+  updatedAt: "2026-10-25",
   metaTitle: "Supermarket & Minimart POS in Kenya",
   metaDescription:
     "Supermarket POS for Kenya: fast barcode checkout, M-Pesa STK push, shift cash-ups, real-time stock per branch and supplier price trends. Book a free demo.",
