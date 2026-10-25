@@ -17,7 +17,7 @@ jobs:
     name: Typecheck, lint, unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -42,7 +42,7 @@ jobs:
       NEXT_PUBLIC_GA_ID: G-TEST000000
       NEXT_PUBLIC_META_PIXEL_ID: "1234567890"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
