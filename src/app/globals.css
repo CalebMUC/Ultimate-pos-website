@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Dark mode is opt-in via the theme toggle (<html data-theme="dark">), never automatic. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -192,4 +193,25 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/*
+ * Long-form text (legal pages, blog posts): map the typography plugin onto the theme tokens
+ * so prose follows light/dark automatically. Unlayered, so it overrides the plugin defaults.
+ */
+.prose {
+  --tw-prose-body: var(--muted-fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-lead: var(--muted-fg);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-counters: var(--muted-fg);
+  --tw-prose-bullets: var(--primary);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--fg);
+  --tw-prose-quote-borders: var(--primary);
+  --tw-prose-captions: var(--muted-fg);
+  --tw-prose-code: var(--fg);
+  --tw-prose-th-borders: var(--border-strong);
+  --tw-prose-td-borders: var(--border);
 }

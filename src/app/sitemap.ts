@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { staticRoutes } from "@/config/routes";
+import { posts } from "@/content/blog";
 import { solutionContent, solutionSlugs } from "@/content/solutions";
 import { absoluteUrl } from "@/lib/seo/schema";
 
@@ -18,5 +19,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...pages, ...solutions];
+  const articles = posts.map(({ meta }) => ({
+    url: absoluteUrl(`/blog/${meta.slug}`),
+    lastModified: meta.updatedAt,
+    changeFrequency: "yearly" as const,
+    priority: 0.6,
+  }));
+
+  return [...pages, ...solutions, ...articles];
 }

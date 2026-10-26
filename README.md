@@ -67,16 +67,18 @@ All are optional locally. Set them in the hosting dashboard for production. See 
 
 ## Editing content
 
-| What                                                     | Where                                       |
-| -------------------------------------------------------- | ------------------------------------------- |
-| Business facts (phone, email, location, hours, socials…) | `src/config/site.ts` — the single source    |
-| Features (only real, shipped capabilities)               | `src/content/features.ts`                   |
-| Industry pages                                           | `src/content/solutions/<slug>.ts`           |
-| FAQs                                                     | `src/content/faqs.ts`                       |
-| Testimonials (consent required; samples never ship)      | `src/content/testimonials.ts`               |
-| Client logos and headline numbers                        | `src/content/trust.ts`                      |
-| Indexable pages (sitemap + which nav links appear)       | `src/config/routes.ts`                      |
-| Colours, fonts, dark theme                               | `src/app/globals.css`, `src/app/layout.tsx` |
+| What                                                      | Where                                       |
+| --------------------------------------------------------- | ------------------------------------------- |
+| Business facts (phone, email, location, hours, socials…)  | `src/config/site.ts` — the single source    |
+| Features (only real, shipped capabilities)                | `src/content/features.ts`                   |
+| Industry pages                                            | `src/content/solutions/<slug>.ts`           |
+| FAQs (home, pricing, /faq)                                | `src/content/faqs.ts`                       |
+| Blog posts (MDX exporting `meta`; register in `index.ts`) | `src/content/blog/`                         |
+| Legal facts (entity name, ODPC number, retention)         | `src/config/site.ts` → `legal`              |
+| Testimonials (consent required; samples never ship)       | `src/content/testimonials.ts`               |
+| Client logos and headline numbers                         | `src/content/trust.ts`                      |
+| Indexable pages (sitemap + which nav links appear)        | `src/config/routes.ts`                      |
+| Colours, fonts, dark theme                                | `src/app/globals.css`, `src/app/layout.tsx` |
 
 Adding a page: create it under `src/app/`, export `metadata` with `pageMetadata()` from
 `src/lib/seo/metadata.ts`, and add it to `staticRoutes` in `src/config/routes.ts`. That puts it in

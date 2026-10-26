@@ -163,3 +163,31 @@ export function breadcrumbSchema(items: BreadcrumbItem[]) {
     })),
   };
 }
+
+type BlogPostingInput = {
+  title: string;
+  description: string;
+  path: string;
+  image: string;
+  publishedAt: string;
+  updatedAt: string;
+};
+
+/** Blog article. The author is the organisation (no invented people). */
+export function blogPostingSchema(post: BlogPostingInput) {
+  const url = absoluteUrl(post.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    url,
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    image: absoluteUrl(post.image),
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt,
+    inLanguage: site.locale,
+    author: { "@type": "Organization", "@id": ids.organization, name: site.name },
+    publisher: { "@id": ids.organization },
+  };
+}

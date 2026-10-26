@@ -14,9 +14,19 @@ type PageMetadataInput = {
   noindex?: boolean;
 };
 
+/** The site-wide share image (src/app/opengraph-image.tsx). */
+const defaultImage = {
+  url: "/opengraph-image",
+  width: 1200,
+  height: 630,
+  alt: `${site.name} — cloud POS software for Kenyan businesses, with M-Pesa built in`,
+};
+
 /**
  * Per-page metadata with a self-referencing canonical, Open Graph and Twitter tags.
- * og:image comes from the nearest opengraph-image.tsx file.
+ * og:image comes from the page's own opengraph-image.tsx when it has one (file-based images
+ * take priority). Otherwise this falls back to the site-wide image: setting `openGraph` here
+ * replaces the parent's, so without the fallback such pages would have no share image.
  */
 export function pageMetadata({
   title,
@@ -39,11 +49,13 @@ export function pageMetadata({
       type: ogType,
       siteName: site.name,
       locale: site.ogLocale,
+      images: [defaultImage],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description,
+      images: [defaultImage],
     },
     ...(noindex ? { robots: { index: false, follow: true } } : {}),
   };

@@ -67,6 +67,18 @@ export const site = {
   // [[PLACEHOLDER]] app login URL. The header "Log in" link is hidden while this is null.
   appLoginUrl: null as string | null,
 
+  /** Facts used by /privacy-policy and /terms. Have a lawyer review both pages before launch. */
+  legal: {
+    // [[PLACEHOLDER]] registered business / company name, if different from the brand
+    entityName: "Ultimate POS",
+    // [[PLACEHOLDER]] Office of the Data Protection Commissioner (ODPC) registration number, once registered
+    odpcRegistrationNumber: null as string | null,
+    // [[PLACEHOLDER]] confirm how long enquiries from people who don't become customers are kept
+    leadRetentionMonths: 24,
+    privacyPolicyUpdated: "2026-10-26",
+    termsUpdated: "2026-10-26",
+  },
+
   locale: "en-KE",
   ogLocale: "en_KE",
   currency: "KES",

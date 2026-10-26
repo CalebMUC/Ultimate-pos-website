@@ -3,13 +3,19 @@
 Everything that must be confirmed or supplied before the site goes live.
 Search the code for `[[PLACEHOLDER]]` to find each one.
 
-## Pages still to build (launch blockers marked ⚠)
+## Pages (all built — these need review; launch blockers marked ⚠)
 
-- [ ] ⚠ `/privacy-policy` (Kenya Data Protection Act 2019) — linked from every form and the cookie banner
-- [ ] ⚠ `/terms`
-- [ ] `/pricing`, `/about`, `/faq`, `/blog` (+ articles), `/testimonials` (once real testimonials exist)
+- [ ] ⚠ **Lawyer review** of `/privacy-policy` and `/terms` (Kenya Data Protection Act 2019). Confirm in `src/config/site.ts` → `legal`:
+  - [ ] Registered business name (`entityName`)
+  - [ ] ODPC data-controller registration number (`odpcRegistrationNumber` — shown on the page once set)
+  - [ ] How long enquiries are kept (`leadRetentionMonths`, currently 24)
+  - [ ] The service-provider list in `src/app/(legal)/privacy-policy/page.tsx` matches what you actually use (e.g. if you don't host on Vercel)
+- [ ] `/about`: add the real story — when and why Ultimate POS started, who is behind it, team photos (with permission)
+- [ ] `/blog`: review both articles in `src/content/blog/`. The buyer's guide tells readers to ask vendors about KRA eTIMS, so make sure sales can answer that for Ultimate POS
+- [ ] `/testimonials`: returns 404 until the first real, consented testimonial is added, then appears in the sitemap and footer automatically
+- [ ] `/pricing`: shows "From KES …" automatically once `site.pricing.fromKesPerMonth` is set
 
-Nav and footer links to a page appear automatically once it is added to `staticRoutes` in `src/config/routes.ts` (which also adds it to the sitemap).
+New pages appear in the nav, footer and sitemap once added to `staticRoutes` in `src/config/routes.ts`.
 
 ## Business facts — `src/config/site.ts`
 
