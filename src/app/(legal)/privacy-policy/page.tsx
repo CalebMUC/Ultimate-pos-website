@@ -13,10 +13,10 @@ export const metadata = pageMetadata({
 /*
  * [[PLACEHOLDER]] Have a Kenyan data-protection lawyer review this page before launch.
  * Service providers below are the ones the website code actually uses; update the list if
- * you change provider (e.g. host somewhere other than Vercel).
+ * you change provider.
  */
 const processors = [
-  { name: "Vercel", purpose: "Website hosting and delivery", where: "United States / global network" },
+  { name: "Hetzner", purpose: "Website hosting and delivery", where: "Finland" },
   { name: "Resend", purpose: "Sending enquiry notifications and confirmation emails", where: "United States" },
   {
     name: "Cloudflare (Turnstile)",

@@ -28,6 +28,7 @@ export default defineConfig({
     timeout: 60_000,
     env: {
       EMAIL_TRANSPORT: "console",
+      ALLOW_CONSOLE_EMAIL: "true",
       LEAD_RATE_LIMIT_PER_HOUR: "1000",
     },
   },

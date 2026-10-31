@@ -2,7 +2,7 @@
 
 /**
  * Cookie consent (Kenya Data Protection Act, 2019). Essential cookies are always on;
- * analytics (GA4, Vercel Analytics/Speed Insights) and marketing (Meta Pixel) are off
+ * analytics (GA4) and marketing (Meta Pixel) are off
  * until the visitor opts in. The choice is stored in a first-party cookie for 180 days.
  */
 

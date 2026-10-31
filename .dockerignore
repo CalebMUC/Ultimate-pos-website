@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+proposals
+test-results
+playwright-report
+.lighthouseci
+.env*
+tsconfig.tsbuildinfo

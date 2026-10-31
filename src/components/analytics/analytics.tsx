@@ -13,7 +13,8 @@ const { gaId, metaPixelId: pixelId, onVercel } = clientEnv;
 
 /**
  * Loads analytics only after consent:
- * - analytics consent → GA4, Vercel Analytics, Vercel Speed Insights (real-user Web Vitals)
+ * - analytics consent → GA4 (plus Vercel Analytics and Speed Insights, only on a Vercel host:
+ *   never on the production server, so the consent text and privacy policy don't list them)
  * - marketing consent → Meta Pixel
  * Also tracks clicks on any WhatsApp or phone link anywhere on the site.
  */

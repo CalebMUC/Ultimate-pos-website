@@ -112,7 +112,7 @@ function ConsentForm({ initial, onSave }: { initial: ConsentChoices; onSave: (ch
     {
       key: "analytics",
       label: "Analytics",
-      description: "Google Analytics and Vercel, to see which pages help visitors.",
+      description: "Google Analytics, to see which pages help visitors.",
     },
     { key: "marketing", label: "Marketing", description: "Meta Pixel, to measure Facebook and Instagram adverts." },
   ];

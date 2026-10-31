@@ -64,8 +64,8 @@ export const site = {
   // [[PLACEHOLDER]] "From KES x/month". While null, no price appears anywhere (pages or structured data).
   pricing: { fromKesPerMonth: null as number | null },
 
-  // [[PLACEHOLDER]] app login URL. The header "Log in" link is hidden while this is null.
-  appLoginUrl: null as string | null,
+  // The POS app. The header "Log in" link is hidden while this is null.
+  appLoginUrl: "https://pos.ultimatepos.co.ke" as string | null,
 
   /** Facts used by /privacy-policy and /terms. Have a lawyer review both pages before launch. */
   legal: {
@@ -75,7 +75,7 @@ export const site = {
     odpcRegistrationNumber: null as string | null,
     // [[PLACEHOLDER]] confirm how long enquiries from people who don't become customers are kept
     leadRetentionMonths: 24,
-    privacyPolicyUpdated: "2026-10-26",
+    privacyPolicyUpdated: "2026-10-31",
     termsUpdated: "2026-10-26",
   },
 

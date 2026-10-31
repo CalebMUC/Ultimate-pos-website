@@ -42,7 +42,10 @@ const consoleTransport: Transport = async (from, message) => {
 
 function pickTransport(): Transport | null {
   const env = serverEnv();
-  if (env.EMAIL_TRANSPORT === "console") return consoleTransport;
+  // In production the console mailer needs a second switch: without it, a stray EMAIL_TRANSPORT=console
+  // would tell visitors their request was sent while the lead only reached the server log.
+  const consoleAllowed = process.env.NODE_ENV !== "production" || env.ALLOW_CONSOLE_EMAIL === "true";
+  if (env.EMAIL_TRANSPORT === "console" && consoleAllowed) return consoleTransport;
   if (env.RESEND_API_KEY) return resendTransport(env.RESEND_API_KEY);
   // No key: allow the console mailer in development only. In production this is a failure,
   // so the visitor sees the WhatsApp fallback instead of a false "sent".

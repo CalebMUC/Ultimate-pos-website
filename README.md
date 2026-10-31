@@ -8,7 +8,7 @@ Production URL: **https://ultimatepos.co.ke**
   (`ensureStatic = "navigation"` in `src/app/layout.tsx` fails the build otherwise)
 - Lead forms (demo, quote, contact) via Server Actions — work **with and without JavaScript**
 - Email via Resend + React Email · spam protection via honeypot, timing check, Cloudflare Turnstile, Upstash rate limit
-- GA4, Meta Pixel and Vercel Analytics load **only after cookie consent**
+- GA4 and Meta Pixel load **only after cookie consent**
 - Server-side error monitoring via Sentry (optional)
 
 Before going live, work through [`LAUNCH_CHECKLIST.md`](LAUNCH_CHECKLIST.md).
@@ -52,18 +52,18 @@ A pre-commit hook (Husky + lint-staged) runs ESLint and Prettier on staged files
 
 All are optional locally. Set them in the hosting dashboard for production. See `.env.example`.
 
-| Variable                                                                                            | Purpose                                                                                                         |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_ENV`                                                                              | `production` = indexable. Anything else serves `noindex` and a blocking robots.txt. Falls back to `VERCEL_ENV`. |
-| `RESEND_API_KEY`                                                                                    | Sends lead emails. **Required in production** — without it, forms show the WhatsApp/phone fallback.             |
-| `SALES_EMAIL` / `FROM_EMAIL`                                                                        | Defaults: `sales@ultimatepos.co.ke` / `no-reply@ultimatepos.co.ke`                                              |
-| `EMAIL_TRANSPORT`                                                                                   | `console` prints emails instead of sending (local testing of a production build)                                |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY`                                           | Cloudflare Turnstile. Without them, leads arrive tagged `[Unverified]`.                                         |
-| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`                                               | Rate limiting across server instances (5 leads/hour per IP and per email)                                       |
-| `LEAD_WEBHOOK_URL`                                                                                  | Also POST every lead as JSON to a CRM / Zapier / Google Sheets Apps Script                                      |
-| `NEXT_PUBLIC_GA_ID` / `NEXT_PUBLIC_META_PIXEL_ID`                                                   | Analytics, loaded only after consent                                                                            |
-| `SENTRY_DSN`                                                                                        | Server-side error monitoring                                                                                    |
-| `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`, `META_DOMAIN_VERIFICATION`, `FACEBOOK_APP_ID` | Verification `<meta>` tags                                                                                      |
+| Variable                                                                                            | Purpose                                                                                                                 |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_ENV`                                                                              | `production` = indexable. Anything else serves `noindex` and a blocking robots.txt. The Docker build sets `production`. |
+| `RESEND_API_KEY`                                                                                    | Sends lead emails. **Required in production** — without it, forms show the WhatsApp/phone fallback.                     |
+| `SALES_EMAIL` / `FROM_EMAIL`                                                                        | Defaults: `sales@ultimatepos.co.ke` / `no-reply@ultimatepos.co.ke`                                                      |
+| `EMAIL_TRANSPORT`                                                                                   | `console` prints emails instead of sending. Ignored in production builds unless `ALLOW_CONSOLE_EMAIL=true`              |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY`                                           | Cloudflare Turnstile. Without them, leads arrive tagged `[Unverified]`.                                                 |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`                                               | Rate limiting across server instances (5 leads/hour per IP and per email)                                               |
+| `LEAD_WEBHOOK_URL`                                                                                  | Also POST every lead as JSON to a CRM / Zapier / Google Sheets Apps Script                                              |
+| `NEXT_PUBLIC_GA_ID` / `NEXT_PUBLIC_META_PIXEL_ID`                                                   | Analytics, loaded only after consent                                                                                    |
+| `SENTRY_DSN`                                                                                        | Server-side error monitoring                                                                                            |
+| `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`, `META_DOMAIN_VERIFICATION`, `FACEBOOK_APP_ID` | Verification `<meta>` tags                                                                                              |
 
 ## Editing content
 
@@ -117,28 +117,36 @@ wait for "Verified", then create an API key with "Sending access" only.
 
 - Security headers and a static Content-Security-Policy in `next.config.ts` (static so pages stay
   prerendered; `'unsafe-inline'` for scripts covers Next.js's inline bootstrap). Allow-listed: GA4,
-  Meta Pixel, Turnstile, Vercel Analytics.
+  Meta Pixel, Turnstile.
 - Cookie consent (`src/lib/consent.ts`, `src/components/analytics/`): essential always on; analytics
   and marketing off until the visitor opts in. "Cookie settings" in the footer reopens the choice.
 - Sentry sends no request bodies, headers, cookies or IPs (`src/instrumentation.ts`).
 
-## Deploying (Vercel)
+## Deploying
 
-1. Import the GitHub repo in Vercel (framework: Next.js, Node 24).
-2. Add the environment variables above for **Production** (and Preview, with test keys).
-3. Add `ultimatepos.co.ke` and `www.ultimatepos.co.ke` under Domains; set the apex as primary.
-4. Every pull request gets a preview deployment, which is automatically `noindex`
-   (`VERCEL_ENV=preview`).
+The site runs as the `site` service of the POS Docker stack, on the same Hetzner server, behind the
+same Caddy. The stack lives in the backend repo's `deploy/` folder; its README has the details.
 
-Self-hosting works too (`npm run build && npm start` behind a reverse proxy); Next.js gzips
-responses by default.
+- This repo is cloned to `website/` next to `backend/` and `frontend/` on the server.
+- Runtime settings live in their own file, `website.env` next to the POS `.env` (chmod 600). The site
+  must never get the POS `.env`, which holds the database and JWT secrets.
+- `NEXT_PUBLIC_*` and the verification codes are fixed at build time. They are build args taken from
+  the POS `.env`: change one, then `./pos.sh build site`.
+
+To release only the website, on the server, in `backend/deploy`:
+
+```bash
+git -C ../../website pull --ff-only
+./pos.sh build site                 # alone, outside shop hours: it uses the POS server's CPU and memory
+./pos.sh up -d --no-deps site
+```
 
 ## CI
 
 `.github/workflows/ci.yml`: typecheck → lint → format → content check → unit tests → `npm audit`
 → build → JS budget → Playwright (desktop + mobile, with axe) → Lighthouse CI.
 Lighthouse fails the build below 95 for Accessibility, Best Practices and SEO, and for CLS > 0.1.
-Performance is reported as a warning there because CI measures a local `next start` (no CDN);
-check Performance against the Vercel preview URL, e.g.
-`npx @lhci/cli autorun --collect.url=https://<preview-url>/`.
+Performance is reported as a warning there because CI measures a local `next start`;
+check Performance against the live site, e.g.
+`npx @lhci/cli autorun --collect.url=https://ultimatepos.co.ke/`.
 Dependabot opens weekly update PRs.

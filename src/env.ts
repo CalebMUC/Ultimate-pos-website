@@ -27,6 +27,8 @@ const publicSchema = z.object({
 const serverSchema = z.object({
   /** "resend" sends real email; "console" logs it (local testing only). Defaults to resend when a key is set. */
   EMAIL_TRANSPORT: z.enum(["resend", "console"]).optional(),
+  /** Lets EMAIL_TRANSPORT=console work in a production build. Set only by the end-to-end tests. */
+  ALLOW_CONSOLE_EMAIL: z.enum(["true"]).optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
   SALES_EMAIL: z.email().default(site.email.sales),
   FROM_EMAIL: z.email().default(site.email.from),

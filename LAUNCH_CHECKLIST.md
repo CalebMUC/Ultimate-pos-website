@@ -9,7 +9,7 @@ Search the code for `[[PLACEHOLDER]]` to find each one.
   - [ ] Registered business name (`entityName`)
   - [ ] ODPC data-controller registration number (`odpcRegistrationNumber` — shown on the page once set)
   - [ ] How long enquiries are kept (`leadRetentionMonths`, currently 24)
-  - [ ] The service-provider list in `src/app/(legal)/privacy-policy/page.tsx` matches what you actually use (e.g. if you don't host on Vercel)
+  - [ ] The service-provider list in `src/app/(legal)/privacy-policy/page.tsx` matches what you actually use (hosting is Hetzner, Finland; add the mailbox provider and any webhook destination)
 - [ ] `/about`: add the real story — when and why Ultimate POS started, who is behind it, team photos (with permission)
 - [ ] `/blog`: review both articles in `src/content/blog/`. The buyer's guide tells readers to ask vendors about KRA eTIMS, so make sure sales can answer that for Ultimate POS
 - [ ] `/testimonials`: returns 404 until the first real, consented testimonial is added, then appears in the sitemap and footer automatically
@@ -27,7 +27,7 @@ New pages appear in the nav, footer and sitemap once added to `staticRoutes` in 
 - [ ] Business hours — currently Mon–Sat, 8:00am–6:00pm
 - [ ] Lead response time promise — currently "1 business day"
 - [ ] Social profile URLs (Facebook, Instagram, LinkedIn, TikTok, YouTube) — only filled ones render
-- [ ] App login URL — the header "Log in" link is hidden until set
+- [x] App login URL: `https://pos.ultimatepos.co.ke`
 
 ## Brand
 
