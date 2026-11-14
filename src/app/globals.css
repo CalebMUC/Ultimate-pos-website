@@ -79,6 +79,26 @@
   --shadow-color: 150 40% 2%;
 }
 
+/*
+ * Footer: deep brand green in both themes. The tokens are re-pointed inside it, so every
+ * link, icon and border adapts without per-element overrides.
+ *   --muted-fg #cfe8da on #064a2a = 8.0:1, --primary #8cf0b8 on #064a2a = 7.6:1.
+ */
+.footer-brand {
+  color-scheme: dark;
+  --bg-subtle: #064a2a;
+  --fg: #ffffff;
+  --muted-fg: #cfe8da;
+  --border: rgb(255 255 255 / 0.16);
+  --primary: #8cf0b8;
+  --primary-hover: #b4f6d0;
+  --ring: #ffffff;
+}
+
+:root[data-theme="dark"] .footer-brand {
+  --bg-subtle: #08311f;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-bg-subtle: var(--bg-subtle);

@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, Check, LayoutGrid, MonitorSmartphone } from "lucide-react";
+import { ArrowRight, Building2, LayoutGrid, Users } from "lucide-react";
 import { site } from "@/config/site";
 import { pricingFaqs } from "@/content/faqs";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -9,45 +9,32 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { FaqSection } from "@/components/sections/faq-section";
 import { CtaBand } from "@/components/sections/cta-band";
+import { PlanComparison, PricingPlans } from "@/components/sections/pricing-plans";
 import { WhatsAppIcon } from "@/components/icons";
 
 export const metadata = pageMetadata({
-  title: "POS Pricing in Kenya – Pay per Module",
+  title: "POS Pricing in Kenya: Compare Plans",
   description:
-    "How Ultimate POS pricing works: pay only for the modules, branches and tills you need. Get a tailored quote in KES for your business.",
+    "Compare Ultimate POS plans: Starter, Business and Enterprise, with KRA eTIMS on Enterprise. See the modules and features in each, and get a quote in KES.",
   path: "/pricing",
 });
 
 const priceFactors = [
   {
     icon: LayoutGrid,
-    title: "The modules you switch on",
-    text: "Start with what your business needs — then add deliveries, production, pharmacy, bundles, cash-up and more only when you need them.",
+    title: "Your plan",
+    text: "Starter, Business or Enterprise, depending on the modules and features your business needs.",
   },
   {
     icon: Building2,
     title: "How many branches you run",
-    text: "One shop or many: every branch sits under the same account, with its own stock and sales.",
+    text: "Plans are priced per branch. Every branch sits under the same account, with its own stock and sales.",
   },
   {
-    icon: MonitorSmartphone,
-    title: "How many tills and users",
-    text: "The number of tills and staff logins your team needs day to day.",
+    icon: Users,
+    title: "Add-ons and extra users",
+    text: "On Business, add Deliveries, Production or Pharmacy only if you need them. Enterprise includes them all.",
   },
-];
-
-const modules = [
-  "M-Pesa payments",
-  "Stock control",
-  "Multi-branch",
-  "Purchasing & suppliers",
-  "Customer credit",
-  "Cash-up & shifts",
-  "Bundles & combos",
-  "Deliveries & riders",
-  "Production",
-  "Pharmacy",
-  "Reports & expenses",
 ];
 
 export default function PricingPage() {
@@ -58,8 +45,8 @@ export default function PricingPage() {
       <PageHero
         top={<Breadcrumbs items={[{ name: "Pricing", path: "/pricing" }]} />}
         eyebrow="Pricing"
-        title="Pricing that fits your business — pay only for what you use"
-        lead="Ultimate POS is licensed by module, so a single minimart and a ten-branch wholesaler don't pay the same. Tell us how your business works and we'll send you a price in shillings."
+        title="Simple plans that grow with your business"
+        lead="Choose Starter, Business or Enterprise. Each plan switches on more modules and features, so a single minimart and a ten-branch wholesaler don't pay the same. Tell us how your business works and we'll send you a price in shillings."
       >
         {fromPrice !== null && (
           <p className="mt-6 font-display text-2xl font-bold text-fg">
@@ -79,12 +66,15 @@ export default function PricingPage() {
         </div>
       </PageHero>
 
+      <PricingPlans />
+      <PlanComparison />
+
       <Section aria-labelledby="factors-heading">
         <Container>
           <SectionHeading
             id="factors-heading"
             title="What your price depends on"
-            lead="Your quote is built around three things, so you're not paying for parts of the system you won't use."
+            lead="Your quote is built around three things, so you only pay for what your business uses."
           />
           <ul className="mt-14 grid gap-6 md:grid-cols-3">
             {priceFactors.map(({ icon: Icon, title, text }) => (
@@ -100,40 +90,12 @@ export default function PricingPage() {
         </Container>
       </Section>
 
-      <Section tone="subtle" aria-labelledby="modules-heading">
-        <Container className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <h2 id="modules-heading" className="text-3xl font-bold text-fg sm:text-4xl">
-              Modules you can switch on
-            </h2>
-            <p className="mt-4 text-lg leading-relaxed text-muted-fg">
-              Pick the parts of Ultimate POS that match how you work. On the quote form, tick the modules you&apos;re
-              interested in and we&apos;ll price exactly that.
-            </p>
-            <LinkButton href="/features" variant="secondary" className="mt-8">
-              See what each module does
-            </LinkButton>
-          </div>
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {modules.map((module) => (
-              <li
-                key={module}
-                className="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 font-medium text-fg"
-              >
-                <Check aria-hidden="true" className="size-4 shrink-0 text-primary" strokeWidth={3} />
-                {module}
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </Section>
-
       <Section aria-labelledby="quote-steps-heading">
         <Container>
           <SectionHeading id="quote-steps-heading" title="How getting a quote works" />
           <ol className="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-3">
             {[
-              "Tell us about your business on the quote form — branches, tills and the modules you want.",
+              "Tell us about your business on the quote form: your branches, users and the modules you want.",
               `We call you within ${site.responseTime} to go through your needs and your quote.`,
               "If it fits, we set up your account, import your products and train your staff.",
             ].map((step, i) => (

@@ -29,6 +29,13 @@ async function loadFontsBase64() {
   return Promise.all(files.map(async (file) => (await readFile(join(fontDir, file))).toString("base64")));
 }
 
+/** The official logo as a data URL (ImageResponse can't fetch relative URLs at build time). */
+async function loadLogoDataUrl() {
+  "use cache";
+  const png = await readFile(join(process.cwd(), "public/brand/upos-logo.png"));
+  return `data:image/png;base64,${png.toString("base64")}`;
+}
+
 const toArrayBuffer = (base64: string) => {
   const bytes = Buffer.from(base64, "base64");
   return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
@@ -43,6 +50,7 @@ type OgImageProps = {
 
 export async function renderOgImage({ eyebrow, title, subtitle }: OgImageProps) {
   const [jakarta800, inter500, inter600] = (await loadFontsBase64()).map(toArrayBuffer);
+  const logo = await loadLogoDataUrl();
   const titleSize = title.length > 70 ? 52 : title.length > 45 ? 60 : 68;
 
   return new ImageResponse(
@@ -60,15 +68,9 @@ export async function renderOgImage({ eyebrow, title, subtitle }: OgImageProps) 
     >
       <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: "64px 72px 40px" }}>
         {/* Brand */}
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <svg width="64" height="64" viewBox="0 0 40 40">
-            <rect width="40" height="40" rx="11" fill="#0a7a43" />
-            <path d="M12 11v10.5a8 8 0 0 0 16 0V11" fill="none" stroke="#fff" strokeWidth="4.2" strokeLinecap="round" />
-            <circle cx="29.5" cy="29.5" r="4" fill="#3b82f6" stroke="#fff" strokeWidth="2" />
-          </svg>
-          <div style={{ display: "flex", fontFamily: "Jakarta", fontSize: 38, color: "#0e1c16" }}>
-            Ultimate<span style={{ color: "#0a7a43", marginLeft: 10 }}>POS</span>
-          </div>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain <img> */}
+          <img src={logo} alt={site.name} width={135} height={80} />
         </div>
 
         {/* Copy */}

@@ -8,6 +8,6 @@ export default function Image() {
   return renderOgImage({
     eyebrow: "Pricing",
     title: "Get a POS quote for your business in KES",
-    subtitle: "Pay only for the modules, branches and tills you need.",
+    subtitle: "Starter, Business or Enterprise: tell us what you need and get a price.",
   });
 }

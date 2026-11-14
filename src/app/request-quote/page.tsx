@@ -20,7 +20,7 @@ export default function RequestQuotePage() {
         top={<Breadcrumbs items={[{ name: "Request a quote", path: "/request-quote" }]} />}
         eyebrow="Pricing"
         title="Get a quote for your business"
-        lead="Ultimate POS is licensed by module, so you only pay for what you use. Tell us about your business and we'll send you a price in shillings."
+        lead="Ultimate POS has three plans (Starter, Business and Enterprise), priced per branch. Tell us about your business and we'll recommend a plan and send you a price in shillings."
       />
       <Container className="grid gap-10 py-12 sm:py-16 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-12">
         <div className="rounded-3xl border border-border bg-surface p-6 shadow-card sm:p-10">

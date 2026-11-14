@@ -48,7 +48,6 @@ export const metadata: Metadata = {
   // Preview and staging deployments must never be indexed.
   robots: isProduction ? { index: true, follow: true } : { index: false, follow: false },
   formatDetection: { telephone: false },
-  icons: { icon: [{ url: site.logo, type: "image/svg+xml" }] },
   verification: {
     google: seoEnv.GOOGLE_SITE_VERIFICATION,
     other: {

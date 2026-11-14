@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check, CircleAlert, CircleCheck } from "lucide-react";
 import { getFeature } from "@/content/features";
 import { getSolution, solutionSlugs, type Solution } from "@/content/solutions";
 import { getSolutionSummary } from "@/content/solutions/catalog";
+import { solutionImages } from "@/content/solutions/images";
 import { testimonialsForIndustry } from "@/content/testimonials";
 import { whatsappLink } from "@/lib/whatsapp";
 import { pageMetadata } from "@/lib/seo/metadata";
@@ -198,6 +200,7 @@ export default async function SolutionPage({ params }: PageProps<"/solutions/[sl
   if (!solution) notFound();
 
   const Icon = solutionIcons[solution.icon];
+  const image = solutionImages[solution.slug];
   const testimonials = testimonialsForIndustry(solution.slug);
 
   return (
@@ -214,7 +217,7 @@ export default async function SolutionPage({ params }: PageProps<"/solutions/[sl
         eyebrow={solution.name}
         title={solution.h1}
       >
-        <div className="mt-5 grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-end">
+        <div className="mt-5 grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
           <div className="max-w-3xl space-y-4 text-lg leading-relaxed text-muted-fg">
             {solution.intro.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
@@ -235,19 +238,43 @@ export default async function SolutionPage({ params }: PageProps<"/solutions/[sl
               </LinkButton>
             </div>
           </div>
-          <div className="rounded-3xl border border-border bg-surface p-7 shadow-card">
-            <span className="grid size-12 place-items-center rounded-xl bg-primary text-primary-fg">
-              <Icon aria-hidden="true" className="size-6" />
-            </span>
-            <p className="mt-5 font-display text-lg font-bold text-fg">Why {solution.name.toLowerCase()} choose us</p>
-            <ul className="mt-4 space-y-3">
-              {solution.highlights.map((highlight) => (
-                <li key={highlight} className="flex items-center gap-3 text-fg">
-                  <Check aria-hidden="true" className="size-4 shrink-0 text-primary" strokeWidth={3} />
-                  {highlight}
-                </li>
-              ))}
-            </ul>
+          <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-card">
+            <figure className="relative">
+              <div className="relative aspect-[16/9] bg-bg-subtle">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  preload
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  className="object-cover"
+                  style={{ objectPosition: image.position }}
+                />
+              </div>
+              {image.credit && (
+                <figcaption className="absolute right-2 bottom-2 rounded-md bg-black/55 px-2 py-0.5 text-[0.65rem] text-white">
+                  Photo:{" "}
+                  <a href={image.credit.sourceUrl} className="underline underline-offset-2">
+                    {image.credit.author}
+                  </a>
+                  , {image.credit.license}
+                </figcaption>
+              )}
+            </figure>
+            <div className="relative p-7 pt-0">
+              <span className="-mt-6 grid size-12 place-items-center rounded-xl bg-primary text-primary-fg shadow-card ring-4 ring-surface">
+                <Icon aria-hidden="true" className="size-6" />
+              </span>
+              <p className="mt-4 font-display text-lg font-bold text-fg">Why {solution.name.toLowerCase()} choose us</p>
+              <ul className="mt-4 space-y-3">
+                {solution.highlights.map((highlight) => (
+                  <li key={highlight} className="flex items-center gap-3 text-fg">
+                    <Check aria-hidden="true" className="size-4 shrink-0 text-primary" strokeWidth={3} />
+                    {highlight}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </PageHero>

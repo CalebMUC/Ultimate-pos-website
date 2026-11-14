@@ -41,7 +41,7 @@ export const homeFaqs: Faq[] = [
   {
     question: "How much does Ultimate POS cost?",
     answer:
-      "Ultimate POS uses modular licensing: you switch on only the modules you need, such as deliveries, production, pharmacy, bundles or cash-up. Pricing depends on your modules, branches and users, so request a quote and we will send you a price for your business.",
+      "Ultimate POS has three plans: Starter for a single shop, Business for growing shops and branches, and Enterprise for 5+ branches, distributors and manufacturers. Plans are priced per branch, and on Business you can add deliveries, production or pharmacy. Request a quote and we will send you a price for your business.",
   },
   {
     question: "How do I get started?",
@@ -61,7 +61,7 @@ const homeFaq = (question: string) => {
 export const pricingFaqs: Faq[] = [
   faq(
     "How is Ultimate POS priced?",
-    "Ultimate POS uses modular licensing. Your price depends on the modules you switch on — such as deliveries, production, pharmacy, bundles or cash-up — and on the number of branches and users or tills you need. Request a quote and we will send you a price in shillings for your business.",
+    "Ultimate POS has three plans: Starter, Business and Enterprise. Each one switches on more modules and features, and plans are priced per branch. On Business you can add deliveries, production or pharmacy as add-ons; Enterprise includes them all. Request a quote and we will send you a price in shillings for your business.",
   ),
   faq(
     "Is the demo really free?",
@@ -69,11 +69,15 @@ export const pricingFaqs: Faq[] = [
   ),
   faq(
     "Do I pay for modules I don't use?",
-    "No. You switch on only the modules your business needs, and leave out the rest. If your business grows into new areas — deliveries or a second branch, for example — talk to us about adding them.",
+    "No. Each plan includes only the modules listed for it, and on Business the deliveries, production and pharmacy modules are optional add-ons. If your business grows (a second branch or deliveries, for example), talk to us about moving up a plan or adding a module.",
   ),
   faq(
     "Do I need to buy a server?",
     "No. Ultimate POS is cloud-based, so there is no server to buy or maintain at your premises. You and your team log in over the internet, and updates are applied automatically.",
+  ),
+  faq(
+    "Does Ultimate POS support KRA eTIMS?",
+    "Yes. KRA eTIMS is included in the Enterprise plan: your sales invoices are sent to KRA's eTIMS straight from Ultimate POS. Ask us about it when you request a quote.",
   ),
   faq(
     "What about hardware like receipt printers and barcode scanners?",
@@ -117,7 +121,7 @@ export const faqGroups: { id: string; title: string; faqs: Faq[] }[] = [
   {
     id: "pricing",
     title: "Pricing",
-    faqs: [pricingFaqs[0], pricingFaqs[1], pricingFaqs[2], pricingFaqs[3]],
+    faqs: [pricingFaqs[0], pricingFaqs[1], pricingFaqs[2], pricingFaqs[3], pricingFaqs[4]],
   },
   {
     id: "support",

@@ -48,6 +48,7 @@ export const moduleOptions: Option[] = [
   { value: "production", label: "Production / manufacturing" },
   { value: "pharmacy", label: "Pharmacy" },
   { value: "reports", label: "Reports & expenses" },
+  { value: "etims", label: "KRA eTIMS" },
 ];
 
 export const timelineOptions: Option[] = [

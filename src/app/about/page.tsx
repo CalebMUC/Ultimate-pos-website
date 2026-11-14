@@ -30,7 +30,7 @@ const values = [
   {
     icon: Puzzle,
     title: "Only what you need",
-    text: "Modular licensing means a minimart doesn't pay for a manufacturer's tools. Switch on the modules that match how you work.",
+    text: "Three plans and add-on modules mean a minimart doesn't pay for a manufacturer's tools. Pick the plan that matches how you work.",
   },
   {
     icon: MapPin,

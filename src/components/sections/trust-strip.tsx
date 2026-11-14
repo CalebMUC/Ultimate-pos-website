@@ -20,19 +20,29 @@ export function TrustStrip() {
           </dl>
         )}
         {clientLogos.length > 0 && (
-          <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
-            {clientLogos.map((logo) => (
-              <li key={logo.name}>
-                <Image
-                  src={logo.src}
-                  alt={logo.name}
-                  width={logo.width}
-                  height={logo.height}
-                  className="h-10 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
-                />
-              </li>
-            ))}
-          </ul>
+          <div>
+            <h2 className="text-center text-sm font-semibold tracking-wider text-muted-fg uppercase">
+              Trusted by Kenyan businesses
+            </h2>
+            {/* White tiles keep every client's brand colours readable in light and dark mode. */}
+            <ul className="mt-6 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+              {clientLogos.map((logo) => (
+                <li
+                  key={logo.name}
+                  className="flex h-20 w-40 items-center justify-center rounded-2xl border border-border bg-white px-5 py-3 sm:w-48"
+                >
+                  <Image
+                    src={logo.src}
+                    alt={logo.name}
+                    width={logo.width}
+                    height={logo.height}
+                    sizes="160px"
+                    className="max-h-full w-auto max-w-full object-contain"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </Container>
     </section>

@@ -9,8 +9,8 @@ export type SocialNetwork = "facebook" | "instagram" | "linkedin" | "tiktok" | "
 export const site = {
   name: "Ultimate POS",
   legalName: "Ultimate POS",
-  // [[PLACEHOLDER]] confirm final tagline
-  tagline: "Run every branch, every sale, every shilling — from one system.",
+  /** Brand tagline, as on the logo. Shown under the footer logo. */
+  tagline: "Ultimate solution for your business",
   description:
     "Cloud POS and business management software built in Kenya: M-Pesa payments, stock control, multi-branch management and real-time reports.",
 
@@ -58,8 +58,8 @@ export const site = {
   // [[PLACEHOLDER]] add profile URLs. Only networks with a URL are rendered.
   social: {} as Partial<Record<SocialNetwork, string>>,
 
-  /** Square brand mark used for structured data and icons. [[PLACEHOLDER]] replace with the official logo. */
-  logo: "/logo.svg",
+  /** Square logo (512×512, white background) for structured data. Built by scripts/build_brand_assets.py. */
+  logo: "/brand/upos-logo-square.png",
 
   // [[PLACEHOLDER]] "From KES x/month". While null, no price appears anywhere (pages or structured data).
   pricing: { fromKesPerMonth: null as number | null },

@@ -1,4 +1,4 @@
-import { Body, Container, Head, Heading, Hr, Html, Link, Preview, Section, Text } from "@react-email/components";
+import { Body, Container, Head, Heading, Hr, Html, Img, Link, Preview, Section, Text } from "@react-email/components";
 
 export type LeadAutoReplyProps = {
   firstName: string;
@@ -32,8 +32,15 @@ export function LeadAutoReply({
       <Preview>{`Thanks ${firstName}, we've received your ${requestLabel}.`}</Preview>
       <Body style={{ backgroundColor: "#f3f8f5", fontFamily: "Arial, Helvetica, sans-serif", margin: 0 }}>
         <Container style={{ backgroundColor: "#ffffff", margin: "24px auto", maxWidth: "560px" }}>
-          <Section style={{ backgroundColor: green, padding: "20px 28px" }}>
-            <Text style={{ color: "#ffffff", fontSize: "20px", fontWeight: "bold", margin: 0 }}>Ultimate POS</Text>
+          <Section style={{ borderBottom: `4px solid ${green}`, padding: "20px 28px" }}>
+            {/* Absolute URL: email clients can't resolve relative paths. Alt text shows when images are blocked. */}
+            <Img
+              src={`${siteUrl}/brand/upos-logo.png`}
+              alt="Ultimate POS"
+              width="81"
+              height="48"
+              style={{ color: green, fontSize: "20px", fontWeight: "bold" }}
+            />
           </Section>
 
           <Section style={{ padding: "28px" }}>

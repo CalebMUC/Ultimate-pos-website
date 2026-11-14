@@ -1,6 +1,6 @@
 /**
  * Product capabilities. Only real, shipped features belong here.
- * [[PLACEHOLDER]] Confirm before adding: KRA eTIMS, offline mode, hardware bundles, mobile app.
+ * [[PLACEHOLDER]] Confirm before adding: offline mode, hardware bundles, mobile app.
  */
 
 export type FeatureIcon =
@@ -12,6 +12,7 @@ export type FeatureId =
   | "bundles"
   | "discounts-rewards"
   | "cash-up"
+  | "etims"
   | "stock-levels"
   | "stock-adjustments-transfers"
   | "batch-expiry"
@@ -86,6 +87,12 @@ export const featureGroups: FeatureGroup[] = [
         id: "cash-up",
         title: "Cash-up and shift sessions",
         description: "Open and close shifts per till so every shilling is reconciled at the end of the day.",
+      },
+      {
+        id: "etims",
+        title: "KRA eTIMS invoicing",
+        description:
+          "Send your sales invoices to KRA's eTIMS straight from Ultimate POS. Included in the Enterprise plan.",
       },
     ],
   },
@@ -280,9 +287,9 @@ export const featureGroups: FeatureGroup[] = [
       },
       {
         id: "modular-licensing",
-        title: "Modular licensing",
+        title: "Plans that grow with you",
         description:
-          "Switch on only the modules you need — deliveries, production, pharmacy, bundles, cash-up and more.",
+          "Three plans (Starter, Business and Enterprise), with deliveries, production and pharmacy as add-ons, so you only pay for what you use.",
       },
     ],
   },
