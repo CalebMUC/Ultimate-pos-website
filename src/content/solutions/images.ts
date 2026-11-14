@@ -68,8 +68,8 @@ export const solutionImages: Record<SolutionSlug, SolutionImage> = {
   },
   "water-refill-delivery-pos": {
     src: waterRefillDeliveryPosPhoto,
-    alt: "The water vending machine and refill station at Aqua Hub, an Ultimate POS client",
-    position: "center 30%",
+    alt: "The Aqua Hub water refilling shop, an Ultimate POS client, with its water vending machine inside",
+    position: "center 12%",
     // Client photo (Aqua Hub), cropped from portrait to landscape: no credit needed.
   },
   "manufacturing-production-software": {
