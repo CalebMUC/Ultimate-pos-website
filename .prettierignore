@@ -5,3 +5,6 @@ next-env.d.ts
 .lighthouseci
 playwright-report
 test-results
+
+# Search engine verification files: served byte-for-byte, never reformat
+public/google*.html
