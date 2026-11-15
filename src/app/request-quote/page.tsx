@@ -32,6 +32,7 @@ export default function RequestQuotePage() {
         </div>
         <LeadAside
           whatsappContext={{ kind: "pricing" }}
+          photoCaption="Need a receipt printer, barcode scanner or cash drawer too? List them on the form and we'll include them in your quote."
           steps={[
             "We look at your branches, tills and the modules you need.",
             `We call you within ${site.responseTime} to go through your quote.`,

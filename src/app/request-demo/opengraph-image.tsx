@@ -9,5 +9,6 @@ export default function Image() {
     eyebrow: "Free demo",
     title: "Book your free Ultimate POS demo",
     subtitle: "On-site, online or by phone — see it working for your type of business.",
+    withProductPhoto: true,
   });
 }

@@ -10,6 +10,7 @@ import { FeatureGrid } from "@/components/sections/feature-grid";
 import { IndustryGrid } from "@/components/sections/industry-grid";
 import { Spotlight } from "@/components/sections/spotlight";
 import { HowItWorks } from "@/components/sections/how-it-works";
+import { PosSetup } from "@/components/sections/pos-setup";
 import { Testimonials } from "@/components/sections/testimonials";
 import { PricingTeaser } from "@/components/sections/pricing-teaser";
 import { FaqSection } from "@/components/sections/faq-section";
@@ -34,6 +35,7 @@ export default function HomePage() {
       <IndustryGrid />
       <Spotlight />
       <HowItWorks />
+      <PosSetup />
       <Testimonials items={testimonials.slice(0, 6)} />
       <PricingTeaser />
       <FaqSection faqs={homeFaqs} />

@@ -10,5 +10,6 @@ export default function Image() {
     eyebrow: "POS system for Kenyan businesses",
     title: "The POS system that runs your whole business, every branch.",
     subtitle: "Sell faster with M-Pesa, control stock in every branch and see your profit in real time.",
+    withProductPhoto: true,
   });
 }

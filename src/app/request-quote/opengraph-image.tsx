@@ -9,5 +9,6 @@ export default function Image() {
     eyebrow: "Pricing",
     title: "Get a POS quote for your business in KES",
     subtitle: "Starter, Business or Enterprise: tell us what you need and get a price.",
+    withProductPhoto: true,
   });
 }

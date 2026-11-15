@@ -61,6 +61,9 @@ export const site = {
   /** Square logo (512×512, white background) for structured data. Built by scripts/build_brand_assets.py. */
   logo: "/brand/upos-logo-square.png",
 
+  /** Product photo (Ultimate POS on a complete counter setup) for structured data and share images. See content/pos-setup-image.ts. */
+  productPhoto: "/images/ultimate-pos-complete-setup.jpg",
+
   // [[PLACEHOLDER]] "From KES x/month". While null, no price appears anywhere (pages or structured data).
   pricing: { fromKesPerMonth: null as number | null },
 

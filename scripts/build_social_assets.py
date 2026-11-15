@@ -3,8 +3,8 @@ Builds profile pictures and cover images for Google Business Profile and social 
 
     python scripts/build_social_assets.py        (needs Pillow; run from the repo root)
 
-Output: marketing/get-found/images/. Uses the same source logo and colours as
-build_brand_assets.py, and the site's fonts from node_modules/@fontsource.
+Output: marketing/get-found/images/. Uses the logo drawn by build_brand_assets.py
+(gold diamond + "UltimatePOS"), and the site's fonts from node_modules/@fontsource.
 Every cover keeps its text inside the network's "safe area" (the part that is never
 cropped on phones or hidden behind the profile picture).
 """
@@ -16,16 +16,15 @@ from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_brand_assets import (  # noqa: E402
-    BLACK,
-    BLUE,
-    GREEN,
-    LIGHT_COLOURS,
+    CREAM,
+    GOLD,
+    GOLD_ON_LIGHT,
+    NAVY,
     ROOT,
-    SOURCE,
-    find_crops,
-    render,
-    unmix,
-    without_letter,
+    WHITE,
+    lockup,
+    mark,
+    wordmark,
 )
 
 OUT = ROOT / "marketing/get-found/images"
@@ -38,8 +37,6 @@ TAGLINE = "Ultimate solution for your business"
 LINE_2 = "POS software for Kenyan businesses  ·  M-Pesa built in  ·  Multi-branch"
 LINE_3 = "ultimatepos.co.ke   ·   0720 463 710"
 
-# Logo on the green covers: white, with the accent bars in light blue.
-ON_GREEN = {GREEN: (255, 255, 255), BLUE: (180, 204, 255), BLACK: (255, 255, 255)}
 
 # (file, size, safe area x0, y0, x1, y1)
 COVERS = [
@@ -69,23 +66,27 @@ def gradient(size):
     return img.convert("RGBA")
 
 
-def text_block(logo, height=400):
-    """Logo on the left, three lines of text on the right, transparent background."""
-    jakarta = ImageFont.truetype(str(JAKARTA), 112)
-    inter600 = ImageFont.truetype(str(INTER_600), 50)
-    inter500 = ImageFont.truetype(str(INTER_500), 46)
+def text_block(height=400):
+    """The diamond mark on the left; "UltimatePOS" and three lines of text on the right."""
+    words, cap_top = wordmark(96, WHITE, GOLD)
+    words = words.crop((0, cap_top, words.width, words.height))  # drop the space above the capitals
+    jakarta = ImageFont.truetype(str(JAKARTA), 58)
+    inter600 = ImageFont.truetype(str(INTER_600), 42)
+    inter500 = ImageFont.truetype(str(INTER_500), 40)
     lines = [(TAGLINE, jakarta, (255, 255, 255)), (LINE_2, inter600, (230, 245, 236)), (LINE_3, inter500, (190, 235, 210))]
-    gaps = [0, 34, 26]
+    gaps = [40, 26, 22]
     sizes = [ImageDraw.Draw(Image.new("L", (1, 1))).textbbox((0, 0), t, font=f) for t, f, _ in lines]
-    text_w = max(b[2] for b in sizes)
-    text_h = sum(b[3] - b[1] for b in sizes) + sum(gaps)
+    text_w = max([b[2] for b in sizes] + [words.width])
+    text_h = words.height + sum(b[3] - b[1] for b in sizes) + sum(gaps)
 
-    logo = logo.resize((round(logo.width * height / logo.height), height), Image.LANCZOS)
+    logo = mark(height, GOLD, CREAM)
     gap = 90
     block = Image.new("RGBA", (logo.width + gap + text_w, max(height, text_h)), (0, 0, 0, 0))
     block.alpha_composite(logo, (0, (block.height - height) // 2))
-    draw = ImageDraw.Draw(block)
     y = (block.height - text_h) // 2
+    block.alpha_composite(words, (logo.width + gap, y))
+    y += words.height
+    draw = ImageDraw.Draw(block)
     for (text, font, colour), box, g in zip(lines, sizes, gaps):
         y += g
         draw.text((logo.width + gap, y - box[1]), text, font=font, fill=colour)
@@ -118,17 +119,12 @@ def avatar(mark, background, size=1080, scale=0.58):
 
 
 def main():
-    src = Image.open(SOURCE).convert("RGB")
-    ink_map, alpha = unmix(src)
-    lockup, mark = find_crops(alpha)
-    icon_alpha, icon_box = without_letter(alpha, mark)  # profile pictures: diamond without the "U"
-
     OUT.mkdir(parents=True, exist_ok=True)
-    logo_white = render(ink_map, alpha, lockup, ON_GREEN)
-    mark_white = render(ink_map, icon_alpha, icon_box, ON_GREEN)
-    mark_colour = render(ink_map, icon_alpha, icon_box, LIGHT_COLOURS)
+    mark_on_dark = mark(1024, GOLD, CREAM)
+    mark_on_light = mark(1024, GOLD_ON_LIGHT, NAVY)
+    mark_white = mark(1024, WHITE, WHITE)  # for the faint watermark
 
-    block = text_block(logo_white)
+    block = text_block()
     for name, size, safe in COVERS:
         canvas = gradient(size)
         watermark(canvas, mark_white)
@@ -136,12 +132,14 @@ def main():
         canvas.alpha_composite(img, pos)
         canvas.convert("RGB").save(OUT / name, optimize=True)
 
-    avatar(mark_colour, (255, 255, 255)).save(OUT / "profile-picture-white-1080.png", optimize=True)
-    avatar(mark_white, gradient((1080, 1080))).save(OUT / "profile-picture-green-1080.png", optimize=True)
+    avatar(mark_on_light, WHITE).save(OUT / "profile-picture-white-1080.png", optimize=True)
+    avatar(mark_on_dark, gradient((1080, 1080))).save(OUT / "profile-picture-green-1080.png", optimize=True)
+    # Navy, like the app's sidebar and the site's favicon.
+    avatar(mark_on_dark, NAVY).save(OUT / "profile-picture-navy-1080.png", optimize=True)
     # Google Business Profile logo: full lockup on white, square.
     gbp = Image.new("RGBA", (1080, 1080), (255, 255, 255, 255))
-    lock = render(ink_map, alpha, lockup, LIGHT_COLOURS)
-    img, pos = fit(lock, (150, 150, 930, 930))
+    lock = lockup(240, GOLD_ON_LIGHT, NAVY, NAVY, GOLD_ON_LIGHT)
+    img, pos = fit(lock, (90, 90, 990, 990))
     gbp.alpha_composite(img, pos)
     gbp.convert("RGB").save(OUT / "google-business-logo-1080.png", optimize=True)
 

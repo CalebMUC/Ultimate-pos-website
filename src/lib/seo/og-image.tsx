@@ -36,6 +36,13 @@ async function loadLogoDataUrl() {
   return `data:image/png;base64,${png.toString("base64")}`;
 }
 
+/** The product photo (Ultimate POS on a complete counter setup) as a data URL. */
+async function loadProductPhotoDataUrl() {
+  "use cache";
+  const jpg = await readFile(join(process.cwd(), "public", site.productPhoto));
+  return `data:image/jpeg;base64,${jpg.toString("base64")}`;
+}
+
 const toArrayBuffer = (base64: string) => {
   const bytes = Buffer.from(base64, "base64");
   return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
@@ -46,12 +53,16 @@ type OgImageProps = {
   eyebrow: string;
   title: string;
   subtitle?: string;
+  /** Show the product photo beside the copy (home and the main sales pages). */
+  withProductPhoto?: boolean;
 };
 
-export async function renderOgImage({ eyebrow, title, subtitle }: OgImageProps) {
+export async function renderOgImage({ eyebrow, title, subtitle, withProductPhoto = false }: OgImageProps) {
   const [jakarta800, inter500, inter600] = (await loadFontsBase64()).map(toArrayBuffer);
   const logo = await loadLogoDataUrl();
-  const titleSize = title.length > 70 ? 52 : title.length > 45 ? 60 : 68;
+  const photo = withProductPhoto ? await loadProductPhotoDataUrl() : null;
+  // With the photo beside it, the copy column is roughly half as wide, so the type is smaller.
+  const titleSize = photo ? (title.length > 45 ? 44 : 52) : title.length > 70 ? 52 : title.length > 45 ? 60 : 68;
 
   return new ImageResponse(
     <div
@@ -70,51 +81,64 @@ export async function renderOgImage({ eyebrow, title, subtitle }: OgImageProps) 
         {/* Brand */}
         <div style={{ display: "flex", alignItems: "center" }}>
           {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain <img> */}
-          <img src={logo} alt={site.name} width={135} height={80} />
+          <img src={logo} alt={site.name} width={267} height={53} />
         </div>
 
-        {/* Copy */}
-        <div style={{ display: "flex", flexDirection: "column", marginTop: "auto", marginBottom: "auto" }}>
-          <div
-            style={{
-              display: "flex",
-              fontFamily: "Inter",
-              fontWeight: 600,
-              fontSize: 26,
-              letterSpacing: 2,
-              textTransform: "uppercase",
-              color: "#0a7a43",
-            }}
-          >
-            {eyebrow}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              marginTop: 18,
-              fontFamily: "Jakarta",
-              fontSize: titleSize,
-              lineHeight: 1.08,
-              letterSpacing: -1.5,
-              color: "#0e1c16",
-              maxWidth: 1000,
-            }}
-          >
-            {title}
-          </div>
-          {subtitle && (
+        <div style={{ display: "flex", alignItems: "center", marginTop: "auto", marginBottom: "auto" }}>
+          {/* Copy */}
+          <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
             <div
               style={{
                 display: "flex",
-                marginTop: 22,
-                fontSize: 28,
-                lineHeight: 1.35,
-                color: "#4a5a53",
-                maxWidth: 960,
+                fontFamily: "Inter",
+                fontWeight: 600,
+                fontSize: 26,
+                letterSpacing: 2,
+                textTransform: "uppercase",
+                color: "#0a7a43",
               }}
             >
-              {subtitle}
+              {eyebrow}
             </div>
+            <div
+              style={{
+                display: "flex",
+                marginTop: 18,
+                fontFamily: "Jakarta",
+                fontSize: titleSize,
+                lineHeight: 1.08,
+                letterSpacing: -1.5,
+                color: "#0e1c16",
+                maxWidth: photo ? 560 : 1000,
+              }}
+            >
+              {title}
+            </div>
+            {subtitle && (
+              <div
+                style={{
+                  display: "flex",
+                  marginTop: 22,
+                  fontSize: photo ? 24 : 28,
+                  lineHeight: 1.35,
+                  color: "#4a5a53",
+                  maxWidth: photo ? 540 : 960,
+                }}
+              >
+                {subtitle}
+              </div>
+            )}
+          </div>
+
+          {photo && (
+            // eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain <img>
+            <img
+              src={photo}
+              alt=""
+              width={480}
+              height={320}
+              style={{ marginLeft: 32, borderRadius: 24, boxShadow: "0 18px 40px rgba(14,28,22,0.14)" }}
+            />
           )}
         </div>
       </div>

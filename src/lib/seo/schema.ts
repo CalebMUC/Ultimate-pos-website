@@ -107,6 +107,7 @@ export function softwareApplicationSchema(testimonials: Testimonial[] = []) {
     description: site.description,
     url: site.url,
     image: absoluteUrl(site.logo),
+    screenshot: absoluteUrl(site.productPhoto),
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web",
     inLanguage: site.locale,

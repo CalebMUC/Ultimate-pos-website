@@ -142,7 +142,8 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-bg/90 backdrop-blur-md supports-[backdrop-filter]:bg-bg/75">
       <Container className="relative flex h-16 items-center gap-4 lg:h-18">
-        <Logo className="mr-auto lg:mr-4" />
+        {/* The full nav leaves little room between lg and xl, so the logo is a little smaller there */}
+        <Logo className="mr-auto lg:mr-2 xl:mr-4" imageClassName="lg:h-6 xl:h-9" />
 
         <nav aria-label="Main" className="hidden lg:block">
           <ul className="flex items-center gap-0.5">
@@ -186,7 +187,7 @@ export function SiteHeader() {
             <WhatsAppIcon />
           </a>
           {site.appLoginUrl && (
-            <a href={site.appLoginUrl} className={cn(navLinkClass, "hidden lg:inline-flex")}>
+            <a href={site.appLoginUrl} className={cn(navLinkClass, "hidden whitespace-nowrap lg:inline-flex")}>
               Log in
             </a>
           )}

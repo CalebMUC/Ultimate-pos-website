@@ -1,5 +1,7 @@
+import Image from "next/image";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { site } from "@/config/site";
+import { posSetupImage } from "@/content/pos-setup-image";
 import { whatsappLink, type WhatsAppContext } from "@/lib/whatsapp";
 import { LinkButton } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/icons";
@@ -7,12 +9,30 @@ import { WhatsAppIcon } from "@/components/icons";
 type LeadAsideProps = {
   steps?: string[];
   whatsappContext: WhatsAppContext;
+  /** Caption for the product photo at the top; leave out to hide the photo. */
+  photoCaption?: string;
 };
 
 /** Sidebar for the lead form pages: what happens next, and every other way to reach us. */
-export function LeadAside({ steps, whatsappContext }: LeadAsideProps) {
+export function LeadAside({ steps, whatsappContext, photoCaption }: LeadAsideProps) {
   return (
     <aside className="space-y-6" aria-label="Other ways to reach us">
+      {photoCaption && (
+        <figure className="overflow-hidden rounded-2xl border border-border bg-surface shadow-card">
+          <div className="bg-white p-3">
+            <Image
+              src={posSetupImage.src}
+              alt={posSetupImage.alt}
+              sizes="(min-width: 1280px) 400px, (min-width: 1024px) 30vw, 100vw"
+              className="h-auto w-full"
+            />
+          </div>
+          <figcaption className="border-t border-border px-5 py-4 text-sm leading-relaxed text-muted-fg">
+            {photoCaption}
+          </figcaption>
+        </figure>
+      )}
+
       {steps && (
         <div className="rounded-2xl border border-border bg-surface p-6 shadow-card">
           <h2 className="text-lg font-bold text-fg">What happens next</h2>

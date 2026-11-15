@@ -9,5 +9,6 @@ export default function Image() {
     eyebrow: "Pricing",
     title: "Simple plans that grow with your business",
     subtitle: "Starter, Business and Enterprise, with KRA eTIMS on Enterprise. Get a quote in KES.",
+    withProductPhoto: true,
   });
 }

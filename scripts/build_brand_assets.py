@@ -1,232 +1,140 @@
 """
-Builds every logo/icon file the site uses from the single source logo.
+Builds every logo/icon file the site uses, by drawing the Ultimate POS logo.
 
     python scripts/build_brand_assets.py            (needs Pillow: pip install pillow)
 
-Source: assets/brand/upos-logo-source.webp (green + blue logo on a white background,
-with the tagline underneath). To swap in a higher-resolution version, replace that file
-and re-run. The script finds the mark, wordmark and tagline itself, so the layout only
-has to match (mark on the left, "Pos" on the right, tagline below).
+The logo is the one in the Ultimate POS app: a gold diamond with a small diamond in its
+centre, followed by the wordmark "Ultimate" + "POS" ("POS" in gold). It's drawn here
+from shapes and the site's display font rather than cut from a screenshot, so every size
+is sharp. To adjust it, change the colours/proportions below and re-run.
 
-The white background is removed by "un-mixing" each pixel against the three ink colours
-(green, blue, black). That gives clean anti-aliased transparency and lets us recolour
-the logo for dark mode.
+File names still say "upos-logo" so links in emails that were already sent keep working.
 """
 
+import math
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE = ROOT / "assets/brand/upos-logo-source.webp"
 PUBLIC = ROOT / "public/brand"
 APP = ROOT / "src/app"
+FONT = ROOT / "node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff"
 
-# Ink colours measured from the source logo (used to separate it from the white background).
-GREEN = (5, 88, 59)  # #05583B
-BLUE = (52, 108, 144)  # #346C90
-BLACK = (0, 0, 0)
-
-# Output colours: the site's button colours, so the logo matches the "Request a demo" button
-# (tokens in src/app/globals.css).
-LIGHT_COLOURS = {GREEN: (10, 122, 67), BLUE: (29, 78, 216), BLACK: (14, 28, 22)}  # --primary, --accent, --fg
-# On the green footer: white, with the accent bars in light blue.
-ON_BRAND_COLOURS = {GREEN: (255, 255, 255), BLUE: (180, 204, 255), BLACK: (255, 255, 255)}
-# Dark theme (on --bg #0b1511): the dark-mode button green and accent blue.
-DARK_COLOURS = {GREEN: (61, 220, 132), BLUE: (122, 167, 255), BLACK: (230, 239, 233)}
-
+# Colours sampled from the logo in the app's sidebar.
+GOLD = (243, 190, 13)  # #F3BE0D
+NAVY = (10, 24, 64)  # #0A1840, the sidebar background
+CREAM = (238, 233, 216)  # the small centre diamond on navy
 WHITE = (255, 255, 255)
+# On white, the sampled gold is very light, so the light version uses a deeper gold.
+GOLD_ON_LIGHT = (224, 160, 0)  # #E0A000
+
+# Proportions of the mark, as fractions of the outer diamond's width (= its height).
+HOLE = 0.68  # inner edge of the gold ring
+CENTRE = 0.34  # the small centre diamond
+CORNER = 0.09  # corner rounding, as a fraction of a side
+
+# Wordmark: cap height as a fraction of the mark's height, and the gap after the mark.
+CAP_HEIGHT = 0.44
+MARK_GAP = 0.24
+
+SUPERSAMPLE = 4
 
 
-def unmix(src: Image.Image):
-    """Per pixel: which ink it is, and how much of it (alpha) over white."""
-    px = src.load()
-    w, h = src.size
-    inks = [GREEN, BLUE, BLACK]
-    ink_map = [[GREEN] * w for _ in range(h)]
-    alpha = Image.new("L", (w, h), 0)
-    ap = alpha.load()
-    for y in range(h):
-        for x in range(w):
-            c = px[x, y]
-            best = None
-            for f in inks:
-                d = [WHITE[i] - f[i] for i in range(3)]
-                v = [WHITE[i] - c[i] for i in range(3)]
-                a = sum(d[i] * v[i] for i in range(3)) / sum(di * di for di in d)
-                a = max(0.0, min(1.0, a))
-                err = sum((v[i] - a * d[i]) ** 2 for i in range(3))
-                if best is None or err < best[0]:
-                    best = (err, f, a)
-            _, f, a = best
-            ink_map[y][x] = f
-            ap[x, y] = round(a * 255) if a > 0.03 else 0  # drop compression noise in the white
-
-    # Faint edge pixels are too pale to tell the inks apart (a light green edge can look grey),
-    # so they take the ink of the nearest solid pixel. Without this, edges get dark fringes.
-    solid = lambda x, y: ap[x, y] >= 128
-    for y in range(h):
-        for x in range(w):
-            if 0 < ap[x, y] < 128:
-                for r in range(1, 5):
-                    near = [
-                        (nx, ny)
-                        for ny in range(max(y - r, 0), min(y + r + 1, h))
-                        for nx in range(max(x - r, 0), min(x + r + 1, w))
-                        if solid(nx, ny)
-                    ]
-                    if near:
-                        nx, ny = min(near, key=lambda q: (q[0] - x) ** 2 + (q[1] - y) ** 2)
-                        ink_map[y][x] = ink_map[ny][nx]
-                        break
-    return ink_map, alpha
+def diamond_mask(size: int, width: float) -> Image.Image:
+    """L mask (size x size) with a rounded diamond `width` px across, centred."""
+    big = size * SUPERSAMPLE
+    side = width * SUPERSAMPLE / math.sqrt(2)
+    c = big / 2
+    m = Image.new("L", (big, big), 0)
+    ImageDraw.Draw(m).rounded_rectangle(
+        (c - side / 2, c - side / 2, c + side / 2, c + side / 2), radius=side * CORNER, fill=255
+    )
+    return m.rotate(45, resample=Image.BICUBIC).resize((size, size), Image.LANCZOS)
 
 
-def render(ink_map, alpha, box, colours=None):
-    """RGBA crop of the logo, optionally recoloured."""
-    x0, y0, x1, y1 = box
-    out = Image.new("RGBA", (x1 - x0, y1 - y0))
-    op = out.load()
-    ap = alpha.load()
-    for y in range(y0, y1):
-        for x in range(x0, x1):
-            f = ink_map[y][x]
-            if colours:
-                f = colours[f]
-            op[x - x0, y - y0] = (*f, ap[x, y])
+def layer(size, colour, mask: Image.Image) -> Image.Image:
+    out = Image.new("RGBA", size, (*colour, 0))
+    out.putalpha(mask)
     return out
 
 
-def ink_bbox(alpha, region, threshold=10):
-    x0, y0, x1, y1 = region
-    mask = alpha.crop(region).point(lambda a: 255 if a > threshold else 0)
-    bx = mask.getbbox()
-    return (x0 + bx[0], y0 + bx[1], x0 + bx[2], y0 + bx[3])
+def mark(size: int, ring, centre) -> Image.Image:
+    """The diamond mark on a transparent square: gold ring, see-through gap, small centre diamond."""
+    w = size - 2  # 1px margin keeps the anti-aliased tips
+    ring_mask = ImageChops.subtract(diamond_mask(size, w), diamond_mask(size, w * HOLE))
+    img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    img = Image.alpha_composite(img, layer(img.size, ring, ring_mask))
+    return Image.alpha_composite(img, layer(img.size, centre, diamond_mask(size, w * CENTRE)))
 
 
-def find_gaps(profile, min_gap):
-    """(start, end) runs of empty rows/columns at least min_gap long."""
-    gaps, start = [], None
-    for i, filled in enumerate(profile + [True]):
-        if not filled and start is None:
-            start = i
-        elif filled and start is not None:
-            if i - start >= min_gap:
-                gaps.append((start, i))
-            start = None
-    return gaps
+def wordmark(cap_height: int, ultimate, pos):
+    """
+    "UltimatePOS" on a transparent background, with capitals cap_height px tall.
+    Returns (image, cap_top): the image also holds the parts that rise above the capitals
+    ("l", "t") or dip below the baseline ("O", "S"); cap_top is where the capitals start.
+    """
+    probe = ImageFont.truetype(str(FONT), 1000)
+    font = ImageFont.truetype(str(FONT), round(1000 * cap_height / -probe.getbbox("U", anchor="ls")[1]))
+    ultimate_w = font.getlength("Ultimate")
+    pos_gap = round(0.045 * cap_height)
+    _, top, _, bottom = font.getbbox("UltimatePOS", anchor="ls")
+    width = math.ceil(ultimate_w + pos_gap + font.getlength("POS")) + 4
+    baseline = -top + 1
+
+    img = Image.new("RGBA", (width, baseline + bottom + 2), (0, 0, 0, 0))
+    for text, x, colour in (("Ultimate", 0, ultimate), ("POS", ultimate_w + pos_gap, pos)):
+        mask = Image.new("L", img.size, 0)
+        ImageDraw.Draw(mask).text((x, baseline), text, font=font, fill=255, anchor="ls")
+        img = Image.alpha_composite(img, layer(img.size, colour, mask))
+    return img, baseline - cap_height
 
 
-def tile(img: Image.Image, size: int, scale: float, background=None, radius=0):
-    """Centre img on a square canvas, its longest side = scale * size."""
+def lockup(height: int, ring, centre, ultimate, pos) -> Image.Image:
+    """Mark + wordmark, `height` px tall, on a transparent background; capitals centred on the mark."""
+    cap = round(CAP_HEIGHT * height)
+    words, cap_top = wordmark(cap, ultimate, pos)
+    gap = round(MARK_GAP * height)
+    img = Image.new("RGBA", (height + gap + words.width, height), (0, 0, 0, 0))
+    img.alpha_composite(mark(height, ring, centre), (0, 0))
+    img.alpha_composite(words, (height + gap, round((height - cap) / 2) - cap_top))
+    return img
+
+
+def tile(img: Image.Image, size: int, scale: float, background, radius=0) -> Image.Image:
+    """Centre img on a square background, its longest side = scale * size."""
     canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    if background:
-        bg = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-        ImageDraw.Draw(bg).rounded_rectangle((0, 0, size - 1, size - 1), radius=radius, fill=(*background, 255))
-        canvas = bg
+    ImageDraw.Draw(canvas).rounded_rectangle((0, 0, size - 1, size - 1), radius=radius, fill=(*background, 255))
     longest = max(img.size)
     target = (round(img.width * scale * size / longest), round(img.height * scale * size / longest))
-    resized = img.resize(target, Image.LANCZOS)
-    canvas.alpha_composite(resized, ((size - target[0]) // 2, (size - target[1]) // 2))
+    canvas.alpha_composite(img.resize(target, Image.LANCZOS), ((size - target[0]) // 2, (size - target[1]) // 2))
     return canvas
 
 
-def fit_height(img: Image.Image, height: int):
-    return img.resize((round(img.width * height / img.height), height), Image.LANCZOS)
-
-
-def find_crops(alpha):
-    """(lockup, mark) boxes: lockup = mark + "Pos" above the tagline; mark = the diamond (with its "U")."""
-    w, h = alpha.size
-    # Split lockup from the tagline at the widest empty row band.
-    full = ink_bbox(alpha, (0, 0, w, h))
-    rows = [alpha.crop((0, y, w, y + 1)).getextrema()[1] > 10 for y in range(h)]
-    row_gaps = [g for g in find_gaps(rows, 8) if full[1] < g[0] and g[1] < full[3]]
-    split_y = max(row_gaps, key=lambda g: g[1] - g[0])
-    lockup = ink_bbox(alpha, (0, 0, w, split_y[0]))
-
-    # Split the mark from "Pos" at the first wide empty column band inside the lockup.
-    cols = [alpha.crop((x, lockup[1], x + 1, lockup[3])).getextrema()[1] > 10 for x in range(w)]
-    col_gaps = [g for g in find_gaps(cols, 12) if lockup[0] < g[0] and g[1] < lockup[2]]
-    mark = ink_bbox(alpha, (lockup[0], lockup[1], col_gaps[0][0], lockup[3]))
-
-    pad = 2  # keep the outermost anti-aliased pixels
-    grow = lambda b: (max(b[0] - pad, 0), max(b[1] - pad, 0), min(b[2] + pad, w), min(b[3] + pad, h))
-    return grow(lockup), grow(mark)
-
-
-def without_letter(alpha, mark):
-    """
-    Copy of alpha with the "U" erased from the mark, for icons and profile pictures.
-    The U is the one shape in the mark that starts in its right-hand 40% (every diamond
-    stroke and accent bar starts further left). Returns (alpha, tight mark box).
-    """
-    x0, y0, x1, y1 = mark
-    out = alpha.copy()
-    ap = out.load()
-    seen, kept, erased = set(), set(), []
-    for sy in range(y0, y1):
-        for sx in range(x0, x1):
-            if ap[sx, sy] <= 8 or (sx, sy) in seen:
-                continue
-            stack, shape = [(sx, sy)], []
-            seen.add((sx, sy))
-            while stack:
-                cx, cy = stack.pop()
-                shape.append((cx, cy))
-                for nx, ny in ((cx + 1, cy), (cx - 1, cy), (cx, cy + 1), (cx, cy - 1)):
-                    if x0 <= nx < x1 and y0 <= ny < y1 and (nx, ny) not in seen and ap[nx, ny] > 8:
-                        seen.add((nx, ny))
-                        stack.append((nx, ny))
-            if min(px for px, _ in shape) > x0 + 0.6 * (x1 - x0):
-                erased += shape
-            else:
-                kept.update(shape)
-    # Also clear a 4px margin around the letter: the lossy source has faint ringing there
-    # that shows as a ghost "U" on dark backgrounds.
-    m = 4
-    for px, py in erased:
-        for ny in range(max(py - m, y0), min(py + m + 1, y1)):
-            for nx in range(max(px - m, x0), min(px + m + 1, x1)):
-                if (nx, ny) not in kept:
-                    ap[nx, ny] = 0
-    tight = ink_bbox(out, mark)
-    return out, (tight[0] - 2, tight[1] - 2, tight[2] + 2, tight[3] + 2)
-
-
 def main():
-    src = Image.open(SOURCE).convert("RGB")
-    ink_map, alpha = unmix(src)
-
-    lockup, mark = find_crops(alpha)
-    icon_alpha, icon_box = without_letter(alpha, mark)
-
-    logo = render(ink_map, alpha, lockup, LIGHT_COLOURS)
-    logo_dark = render(ink_map, alpha, lockup, DARK_COLOURS)
-    mark_img = render(ink_map, icon_alpha, icon_box, LIGHT_COLOURS)  # icons: diamond without the "U"
-
     PUBLIC.mkdir(parents=True, exist_ok=True)
 
-    # Header / footer / OG / email lockups (displayed at ~36–72px tall; 4x for sharp HiDPI).
-    fit_height(logo, 240).save(PUBLIC / "upos-logo.png", optimize=True)
-    fit_height(logo_dark, 240).save(PUBLIC / "upos-logo-dark.png", optimize=True)
-    fit_height(render(ink_map, alpha, lockup, ON_BRAND_COLOURS), 240).save(PUBLIC / "upos-logo-white.png", optimize=True)
+    # Header / footer / OG / email lockups (displayed ~32–56px tall; 240px for sharp HiDPI).
+    light = lockup(240, GOLD_ON_LIGHT, NAVY, NAVY, GOLD_ON_LIGHT)  # on white
+    dark = lockup(240, GOLD, CREAM, WHITE, GOLD)  # dark mode, the green footer, navy
+    light.save(PUBLIC / "upos-logo.png", optimize=True)
+    dark.save(PUBLIC / "upos-logo-dark.png", optimize=True)
+    dark.save(PUBLIC / "upos-logo-white.png", optimize=True)
 
     # Structured-data logo: square, white background (Google shows it on white).
-    tile(logo, 512, 0.8, background=WHITE).convert("RGB").save(PUBLIC / "upos-logo-square.png", optimize=True)
+    tile(light, 512, 0.86, WHITE).convert("RGB").save(PUBLIC / "upos-logo-square.png", optimize=True)
 
-    # Icons: the diamond mark on a white tile, so it reads on light and dark browser chrome.
-    tile(mark_img, 192, 0.8, background=WHITE, radius=36).save(APP / "icon.png", optimize=True)
-    tile(mark_img, 180, 0.76, background=WHITE).convert("RGB").save(APP / "apple-icon.png", optimize=True)
-    tile(mark_img, 192, 0.8, background=WHITE, radius=36).save(PUBLIC / "icon-192.png", optimize=True)
-    tile(mark_img, 512, 0.8, background=WHITE, radius=96).save(PUBLIC / "icon-512.png", optimize=True)
-    # Maskable: full-bleed background, mark inside the 80% safe zone.
-    tile(mark_img, 512, 0.62, background=WHITE).convert("RGB").save(PUBLIC / "icon-maskable-512.png", optimize=True)
+    # Icons: the mark on a navy tile, like the app's sidebar.
+    icon_mark = mark(1024, GOLD, CREAM)
+    tile(icon_mark, 192, 0.74, NAVY, radius=40).save(APP / "icon.png", optimize=True)
+    tile(icon_mark, 192, 0.74, NAVY, radius=40).save(PUBLIC / "icon-192.png", optimize=True)
+    tile(icon_mark, 512, 0.74, NAVY, radius=104).save(PUBLIC / "icon-512.png", optimize=True)
+    # Apple and maskable icons are cropped by the OS: full-bleed navy, mark inside the safe zone.
+    tile(icon_mark, 180, 0.66, NAVY).convert("RGB").save(APP / "apple-icon.png", optimize=True)
+    tile(icon_mark, 512, 0.58, NAVY).convert("RGB").save(PUBLIC / "icon-maskable-512.png", optimize=True)
+    # Favicon: the mark fills more of the tile so it still reads at 16px.
+    tile(icon_mark, 256, 0.84, NAVY, radius=48).save(APP / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
 
-    ico = tile(mark_img, 256, 0.86, background=WHITE, radius=44)
-    ico.save(APP / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
-
-    print("lockup", lockup, "mark", mark, "icon", icon_box)
     for p in sorted(PUBLIC.glob("*.png")) + [APP / "icon.png", APP / "apple-icon.png", APP / "favicon.ico"]:
         with Image.open(p) as im:
             print(f"{p.relative_to(ROOT)}  {im.size[0]}x{im.size[1]}  {p.stat().st_size // 1024} KB")

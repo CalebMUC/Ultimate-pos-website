@@ -9,5 +9,6 @@ export default function Image() {
     eyebrow: "Features",
     title: "Everything Ultimate POS can do for your business",
     subtitle: "M-Pesa checkout, stock per branch, purchasing, customer credit, deliveries, production and reports.",
+    withProductPhoto: true,
   });
 }

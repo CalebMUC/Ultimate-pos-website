@@ -11,6 +11,7 @@ import { LinkButton } from "@/components/ui/button";
 import { Container } from "@/components/ui/layout";
 import { PageHero } from "@/components/ui/page-hero";
 import { CtaBand } from "@/components/sections/cta-band";
+import { PosSetup } from "@/components/sections/pos-setup";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { featureIcons, WhatsAppIcon } from "@/components/icons";
 import { cn } from "@/lib/cn";
@@ -120,6 +121,9 @@ export default function FeaturesPage() {
           </section>
         );
       })}
+
+      {/* Feature groups alternate backgrounds; continue the pattern after the last one */}
+      <PosSetup tone={featureGroups.length % 2 === 1 ? "subtle" : "default"} />
 
       <CtaBand
         title="See these features working for your business"

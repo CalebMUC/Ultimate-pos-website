@@ -49,7 +49,7 @@ export function SiteFooter() {
     <footer className="footer-brand bg-bg-subtle text-fg">
       <Container className="grid gap-10 py-14 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-4">
-          <Logo tone="onBrand" imageClassName="h-14 lg:h-14" />
+          <Logo tone="onBrand" imageClassName="h-10 lg:h-11" />
           <p className="mt-3 font-display text-sm font-bold text-primary">{site.tagline}</p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-fg">{site.description}</p>
 

@@ -32,6 +32,7 @@ export default function RequestDemoPage() {
         </div>
         <LeadAside
           whatsappContext={{ kind: "demo" }}
+          photoCaption="See Ultimate POS at the counter: selling with M-Pesa, printing receipts, scanning barcodes and checking today's figures."
           steps={[
             `We call you within ${site.responseTime} to confirm a time that suits you.`,
             "We show you Ultimate POS using examples from your type of business.",

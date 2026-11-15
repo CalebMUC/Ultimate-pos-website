@@ -37,8 +37,8 @@ export function LeadAutoReply({
             <Img
               src={`${siteUrl}/brand/upos-logo.png`}
               alt="Ultimate POS"
-              width="81"
-              height="48"
+              width="182"
+              height="36"
               style={{ color: green, fontSize: "20px", fontWeight: "bold" }}
             />
           </Section>
