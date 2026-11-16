@@ -7,6 +7,7 @@ import { Hero } from "@/components/sections/hero";
 import { TrustStrip } from "@/components/sections/trust-strip";
 import { WhatIs } from "@/components/sections/what-is";
 import { FeatureGrid } from "@/components/sections/feature-grid";
+import { PromoBanner } from "@/components/sections/promo-banner";
 import { IndustryGrid } from "@/components/sections/industry-grid";
 import { Spotlight } from "@/components/sections/spotlight";
 import { HowItWorks } from "@/components/sections/how-it-works";
@@ -32,6 +33,7 @@ export default function HomePage() {
       <TrustStrip />
       <WhatIs />
       <FeatureGrid />
+      <PromoBanner />
       <IndustryGrid />
       <Spotlight />
       <HowItWorks />
